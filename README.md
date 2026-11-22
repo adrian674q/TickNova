@@ -1,176 +1,102 @@
-
 # TickNova
 
-Plataforma de venta y gestión de boletos para eventos, desarrollada con React 19, Vite 8 y JavaScript.
+Plataforma de venta y gestión de boletos para eventos, hecha con React 19, Vite 8 y JavaScript. Proyecto de Programación Orientada al Usuario (UCA). Esta segunda entrega convierte el prototipo de Figma en una aplicación React funcional, con datos simulados y persistencia en el navegador.
 
-Proyecto académico de la asignatura Programación Orientada al Usuario de la Universidad Centroamericana José Simeón Cañas (UCA).
+## Descripción
+
+El cliente busca eventos, abre el detalle, elige zona y asientos (o cantidad en la zona General), revisa el carrito, paga con una tarjeta simulada y recibe su boleto con código QR, que luego consulta en Mis boletos. Los administradores y organizadores tienen un panel con dashboard, eventos (crear y editar), inventario, usuarios y reportes. La aplicación cubre los ocho módulos del MVP.
 
 ## Instalación y ejecución
 
-### Requisitos previos
+La versión publicada se puede abrir directamente en GitHub Pages, sin instalar nada:
 
-- Node.js compatible con Vite 8
-- npm
-- Git
-- Visual Studio Code o un editor similar
+**https://adrian674q.github.io/TickNova/**
 
-### Instalación
+Para ejecutarla localmente se necesita Node.js 20.19 o superior, npm y Git:
 
-1. Clonar el repositorio:
+```bash
+git clone https://github.com/adrian674q/TickNova.git
+cd TickNova
+npm install
+npm run dev
+```
 
-    git clone https://github.com/adrian674q/TickNova.git
+Luego se abre la dirección que indica Vite, normalmente http://localhost:5173/
 
-2. Entrar a la carpeta del proyecto:
+Otros comandos:
 
-    cd TickNova
+```bash
+npm run build     # genera la versión de producción en dist/
+npm run preview   # sirve la versión de producción
+npm run lint      # revisa el código con ESLint
+```
 
-3. Instalar las dependencias:
+La aplicación utiliza datos simulados y no necesita un backend ni una base de datos real. Cada cambio que se sube a la rama `main` se publica automáticamente en GitHub Pages con el flujo `.github/workflows/deploy.yml`.
 
-    npm install
+## Cuentas de prueba
 
-4. Ejecutar el proyecto:
+- Cliente: matt@ejemplo.com / Cliente123
+- Administrador: ariadna@ejemplo.com / Admin123
+- Organizador: fernanda@ejemplo.com / Organizador123
 
-    npm run dev
+La tarjeta `4000 0000 0000 0002` siempre es rechazada, para ver el error del pago. Cualquier otra tarjeta de 16 dígitos con fecha vigente y CVV de 3 dígitos es aceptada.
 
-5. Abrir en el navegador la dirección indicada por Vite, normalmente:
+## Estructura
 
-    http://localhost:5173/
+- `src/api`: servicios que simulan las peticiones con promesas y `setTimeout`.
+- `src/components`: componentes reutilizables del Design System, cada uno con su CSS.
+- `src/context`: estado compartido de navegación, sesión, carrito y preferencias.
+- `src/data`: datos simulados.
+- `src/hooks`: `usePeticion`, `useEventos`, `useLocalStorage` y `useTitulo`.
+- `src/layout`: estructuras de página (tienda, compra, acceso y panel).
+- `src/pages`: vistas; las del panel están en `src/pages/admin`.
+- `src/utils`: formatos, filtros, asientos, reportes y validaciones.
+- `src/App.jsx`: elige la vista actual y controla el acceso por sesión y rol.
 
-La aplicación utiliza datos simulados y no necesita un backend ni una base de datos real.
+## Componentes
+
+- `Boton`, `Enlace`, `Campo`, `Chips`, `Insignia` e `Icono`: controles y elementos básicos.
+- `Cargando`, `MensajeError` y `EstadoVacio`: estados de carga, error con reintento y vacío.
+- `Encabezado`, `PiePagina`, `BarraLateral`, `Migas`, `Logo`, `Avatar` y `EnlaceSaltar`: navegación e identidad.
+- `BarraBusqueda`, `TarjetaEvento`, `TarjetaDestacada` y `SeccionEventos`: búsqueda y listados de eventos.
+- `TarjetaZona`, `MapaAsientos`, `SelectorCantidad`, `IndicadorPasos`, `ItemCarrito` y `ResumenCompra`: proceso de compra.
+- `CodigoQR` y `TarjetaBoleto`: boletos con código QR generado en el navegador.
+- `TarjetaEstadistica`, `GraficoBarras`, `ListaValores` y `TablaDatos`: dashboard, inventario, usuarios y reportes.
+
+## Estado y persistencia
+
+- La sesión, el carrito y las preferencias (filtro de fechas y correo recordado) se comparten con Context y se guardan en `localStorage`.
+- Las compras, los eventos editados en el panel y las cuentas registradas también se guardan en `localStorage`.
+- La pantalla actual se guarda en `sessionStorage` para conservarla al recargar.
+- Subtotal, cargo y total se calculan a partir del carrito; no se guardan aparte.
+- Las vistas cargan datos con `usePeticion`, que muestra carga, error con reintento y éxito, e ignora resultados obsoletos.
+
+El detalle está en [docs/arquitectura.md](docs/arquitectura.md).
 
 ## Datos simulados
 
-Los datos de TickNova se encuentran en la carpeta src/data/ y permiten representar eventos, usuarios y compras sin utilizar servicios externos.
+- `src/data/eventos.js`: 15 eventos del prototipo, 3 destacados, cada uno con zonas General, Preferencial y VIP, precios y disponibilidad. Fechas de noviembre de 2026 a enero de 2027.
+- `src/data/usuarios.js`: los cinco usuarios del prototipo con roles cliente, administrador y organizador. Correos y contraseñas ficticios.
+- `src/data/ordenes.js`: 36 compras de junio a noviembre de 2026, con las que se calculan el dashboard y los reportes.
 
-### Eventos
+La carga del listado de eventos falla de vez en cuando a propósito para mostrar el estado de error con reintento.
 
-Archivo: src/data/eventos.js
+## Capturas
 
-Contiene 12 eventos basados en el prototipo original de Figma.
-
-Cada evento incluye:
-
-- Identificador
-- Nombre
-- Categoría
-- Fecha y hora
-- Lugar y ciudad
-- Imagen
-- Descripción
-- Estado de disponibilidad
-- Zonas, precios, capacidades y boletos disponibles
-
-Cada evento cuenta con tres zonas: General, Preferencial y VIP.
-
-Las fechas corresponden a noviembre y diciembre de 2026 y enero de 2027.
-
-### Usuarios
-
-Archivo: src/data/usuarios.js
-
-Contiene cinco usuarios ficticios distribuidos en tres roles:
-
-- Cliente
-- Administrador
-- Organizador
-
-Cada usuario tiene un identificador, nombre, correo electrónico, contraseña simulada y rol.
-
-Todos los correos utilizan el dominio @ejemplo.com.
-
-Las credenciales son únicamente para pruebas académicas y no representan un sistema de autenticación seguro.
-
-### Órdenes
-
-Archivo: src/data/ordenes.js
-
-Contiene 20 compras simuladas distribuidas entre septiembre, octubre y noviembre de 2026.
-
-Cada orden incluye:
-
-- Identificador
-- Usuario
-- Evento
-- Zona
-- Cantidad de boletos
-- Total
-- Fecha de compra
-- Estado
-- Código de orden
-
-Las órdenes pueden encontrarse en estado pagada o cancelada.
-
-Estos datos permiten generar reportes y estadísticas de ventas.
-
-## Utilidades
-
-La carpeta src/utils/ contiene tres archivos.
-
-### almacenamiento.js
-
-Permite leer, guardar y eliminar información del navegador utilizando localStorage.
-
-### simularPeticion.js
-
-Simula operaciones asíncronas mediante promesas y setTimeout. También permite simular errores.
-
-### formatos.js
-
-Contiene funciones para mostrar cantidades monetarias en dólares estadounidenses y fechas en español.
-
-## Servicios
-
-La carpeta src/services/ contiene tres archivos.
-
-### eventosService.js
-
-Permite obtener el listado de eventos y consultar un evento específico mediante su identificador.
-
-### usuariosService.js
-
-Permite simular el inicio de sesión de clientes, administradores y organizadores.
-
-### ordenesService.js
-
-Permite consultar las órdenes existentes y registrar nuevas compras simuladas.
-
-Las nuevas órdenes se almacenan en localStorage.
-
-## Estructura del proyecto
-
-TickNova/
-- public/
-  - img/
-    - eventos/
-- src/
-  - assets/
-  - components/
-  - pages/
-  - data/
-  - utils/
-  - services/
-  - styles/
-  - App.jsx
-  - main.jsx
-- .gitignore
-- README.md
-- package.json
-- index.html
-
-## Persistencia local
-
-TickNova dispone de funciones para almacenar información en localStorage.
-
-Actualmente, el servicio de órdenes permite conservar nuevas compras simuladas al actualizar la página.
-
-La persistencia del carrito, la sesión y las preferencias se integrará con las pantallas correspondientes.
+Las capturas de las 15 pantallas principales en 375, 768 y 1440 px están en [docs/capturas/](docs/capturas/).
 
 ## Limitaciones
 
-- No utiliza una base de datos real.
-- No tiene backend.
-- No procesa pagos reales.
-- No envía correos electrónicos.
-- La autenticación es simulada.
-- Los datos son ficticios y se utilizan con fines académicos.
-- Las imágenes de los eventos deben incorporarse en public/img/eventos/.
+- No hay backend, base de datos, pago real ni envío de correos; la autenticación es simulada.
+- Los datos se guardan solo en el navegador; al borrar el `localStorage` vuelven los datos iniciales.
+- La navegación es por estado de vista, así que el botón "atrás" del navegador no cambia de pantalla. React Router se incorpora en la entrega final.
+- El mapa de asientos representa una sección de la zona.
+
+## Decisiones de diseño
+
+- Se respetan la paleta (`#504E76`, `#F1642E`, `#FDF8E2`), las tipografías Poppins e Inter y la jerarquía del prototipo en los tres breakpoints.
+- El naranja de los botones se oscureció a `#CC4A15` para cumplir el contraste mínimo con texto blanco.
+- "Crear evento" y "Edita tu evento" usan la misma pantalla; al editar se elige el evento arriba.
+- VIP y Preferencial tienen asientos numerados; General se compra por cantidad.
+- El cargo por servicio es del 6 %, como en el resumen del prototipo.
+- Estilos con CSS propio; la única dependencia adicional es `qrcode`.
