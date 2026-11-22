@@ -1,0 +1,39 @@
+.tarjeta-estadistica {
+  padding: var(--espacio-4) var(--espacio-4) var(--espacio-3);
+  background: var(--color-superficie);
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra);
+}
+
+.tarjeta-estadistica--destacada {
+  background: var(--color-amarillo);
+}
+
+.tarjeta-estadistica__titulo {
+  font-family: var(--fuente-texto);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--color-texto-suave);
+}
+
+.tarjeta-estadistica--destacada .tarjeta-estadistica__titulo {
+  color: var(--color-amarillo-texto);
+}
+
+.tarjeta-estadistica__valor {
+  margin: var(--espacio-1) 0;
+  font-family: var(--fuente-titulos);
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--color-primario);
+}
+
+.tarjeta-estadistica__detalle {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--color-verde-texto);
+}
+
+.tarjeta-estadistica--destacada .tarjeta-estadistica__detalle {
+  color: var(--color-amarillo-texto);
+}

@@ -1,0 +1,23 @@
+.migas ol {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.85rem;
+  color: var(--color-texto-suave);
+}
+
+.migas li + li::before {
+  content: "›";
+  margin-right: var(--espacio-2);
+}
+
+.migas a {
+  text-decoration: none;
+}
+
+.migas a:hover {
+  text-decoration: underline;
+}

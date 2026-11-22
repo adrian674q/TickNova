@@ -1,0 +1,28 @@
+.lista-valores__titulo {
+  font-size: 1.1rem;
+  font-weight: 400;
+  color: var(--color-primario);
+  margin-bottom: var(--espacio-3);
+}
+
+.lista-valores ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lista-valores li {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--espacio-3);
+  padding: var(--espacio-3) 0;
+  font-size: 0.9rem;
+}
+
+.lista-valores li + li {
+  border-top: 1px solid var(--color-borde);
+}
+
+.lista-valores strong {
+  color: var(--color-primario);
+}

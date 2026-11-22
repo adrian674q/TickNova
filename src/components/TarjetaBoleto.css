@@ -1,0 +1,28 @@
+.tarjeta-boleto {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-4);
+  padding: var(--espacio-4);
+  background: var(--color-superficie);
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra);
+}
+
+.tarjeta-boleto__info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  min-width: 0;
+}
+
+.tarjeta-boleto__nombre {
+  font-size: 1.1rem;
+  font-weight: 400;
+}
+
+.tarjeta-boleto__detalle {
+  font-size: 0.82rem;
+  color: var(--color-texto-suave);
+}

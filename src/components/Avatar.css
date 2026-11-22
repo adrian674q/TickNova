@@ -1,0 +1,10 @@
+.avatar {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--color-lavanda);
+  color: var(--color-primario-oscuro);
+  font-size: 0.75rem;
+  font-weight: 700;
+}

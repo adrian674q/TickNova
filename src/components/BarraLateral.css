@@ -1,0 +1,113 @@
+.barra-lateral {
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: var(--espacio-5) var(--espacio-4);
+  background: var(--color-primario);
+  color: #e3e2f2;
+}
+
+.barra-lateral__logo {
+  padding: 0 var(--espacio-2) var(--espacio-5);
+}
+
+.barra-lateral__logo .logo {
+  font-size: 1.15rem;
+}
+
+.barra-lateral ul {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.barra-lateral__enlace {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-3);
+  padding: var(--espacio-2) var(--espacio-3);
+  border-radius: var(--radio-sm);
+  font-size: 0.92rem;
+  text-decoration: none;
+}
+
+.barra-lateral__enlace::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-lavanda);
+}
+
+.barra-lateral__enlace:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+}
+
+.barra-lateral__enlace.active {
+  background: var(--color-primario-claro);
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.barra-lateral__enlace.active::before {
+  background: var(--color-acento);
+}
+
+.barra-lateral__usuario {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-3);
+  margin-top: auto;
+  padding: var(--espacio-2);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #ffffff;
+  text-decoration: none;
+  border-radius: var(--radio-sm);
+}
+
+.barra-lateral__usuario:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.barra-lateral__usuario p {
+  display: flex;
+  flex-direction: column;
+}
+
+.barra-lateral__usuario p span {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: #e3e2f2;
+}
+
+@media (max-width: 899px) {
+  .barra-lateral {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    bottom: 0;
+    z-index: 25;
+    width: min(280px, 85vw);
+    height: auto;
+    transform: translateX(-100%);
+    visibility: hidden;
+    transition: transform 0.2s, visibility 0.2s;
+  }
+
+  .barra-lateral--abierta {
+    transform: none;
+    visibility: visible;
+    box-shadow: var(--sombra-fuerte);
+  }
+
+  .barra-lateral__logo {
+    display: none;
+  }
+}

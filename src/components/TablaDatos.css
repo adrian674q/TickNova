@@ -1,0 +1,107 @@
+.tabla-datos {
+  background: var(--color-superficie);
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra);
+  overflow: hidden;
+}
+
+.tabla-datos table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabla-datos th {
+  padding: var(--espacio-4) var(--espacio-5);
+  background: var(--color-tabla);
+  text-align: left;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-texto-suave);
+}
+
+.tabla-datos td {
+  padding: var(--espacio-3) var(--espacio-5);
+  border-top: 1px solid var(--color-borde);
+  font-size: 0.9rem;
+  vertical-align: middle;
+}
+
+.tabla-datos__fin,
+.tabla-datos th.tabla-datos__fin {
+  text-align: right;
+}
+
+@media (max-width: 899px) {
+  .tabla-datos thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+  }
+
+  .tabla-datos tr {
+    display: block;
+    padding: var(--espacio-3) var(--espacio-4);
+  }
+
+  .tabla-datos tr + tr {
+    border-top: 1px solid var(--color-borde);
+  }
+
+  .tabla-datos td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--espacio-3);
+    padding: var(--espacio-1) 0;
+    border-top: none;
+    text-align: right;
+  }
+
+  .tabla-datos td::before {
+    content: attr(data-titulo);
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--color-texto-suave);
+    text-align: left;
+  }
+
+  .tabla-datos td:first-child {
+    text-align: left;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 899px) {
+  .tabla-datos--tablet thead {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip: auto;
+  }
+
+  .tabla-datos--tablet tr {
+    display: table-row;
+    padding: 0;
+  }
+
+  .tabla-datos--tablet tr + tr {
+    border-top: none;
+  }
+
+  .tabla-datos--tablet td {
+    display: table-cell;
+    padding: var(--espacio-3) var(--espacio-5);
+    border-top: 1px solid var(--color-borde);
+    text-align: left;
+  }
+
+  .tabla-datos--tablet td::before {
+    content: none;
+  }
+
+  .tabla-datos--tablet .tabla-datos__fin {
+    text-align: right;
+  }
+}

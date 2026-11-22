@@ -1,0 +1,63 @@
+.tarjeta-zona {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-3);
+  padding: var(--espacio-3) var(--espacio-4);
+  border: 2px solid transparent;
+  border-radius: var(--radio-md);
+  cursor: pointer;
+  transition: border-color 0.15s, transform 0.1s;
+}
+
+.tarjeta-zona--lavanda {
+  background: var(--color-lavanda);
+  color: var(--color-primario-oscuro);
+}
+
+.tarjeta-zona--amarillo {
+  background: var(--color-amarillo);
+  color: var(--color-amarillo-texto);
+}
+
+.tarjeta-zona--verde {
+  background: var(--color-verde-claro);
+  color: var(--color-verde-texto);
+}
+
+.tarjeta-zona:hover {
+  border-color: rgba(36, 36, 51, 0.25);
+}
+
+.tarjeta-zona--activa,
+.tarjeta-zona--activa:hover {
+  border-color: var(--color-primario);
+  box-shadow: 0 0 0 2px var(--color-superficie) inset;
+}
+
+.tarjeta-zona:focus-within {
+  box-shadow: var(--foco);
+}
+
+.tarjeta-zona--agotada {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.tarjeta-zona__info {
+  display: flex;
+  flex-direction: column;
+}
+
+.tarjeta-zona__nombre {
+  font-weight: 600;
+}
+
+.tarjeta-zona__descripcion {
+  font-size: 0.78rem;
+}
+
+.tarjeta-zona__precio {
+  font-weight: 700;
+  font-size: 1.05rem;
+}

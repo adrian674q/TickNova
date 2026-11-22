@@ -1,0 +1,55 @@
+.resumen-compra {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-2);
+  padding: var(--espacio-5);
+  border-radius: var(--radio-lg);
+}
+
+.resumen-compra--blanco {
+  background: var(--color-superficie);
+  box-shadow: var(--sombra);
+}
+
+.resumen-compra--lavanda {
+  background: var(--color-lavanda);
+  color: var(--color-primario-oscuro);
+}
+
+.resumen-compra__titulo {
+  font-size: 1.15rem;
+  font-weight: 400;
+}
+
+.resumen-compra dl {
+  margin: 0 0 var(--espacio-3);
+}
+
+.resumen-compra dt {
+  color: var(--color-texto-suave);
+  font-size: 0.9rem;
+}
+
+.resumen-compra--lavanda dt {
+  color: var(--color-primario-oscuro);
+}
+
+.resumen-compra dd {
+  margin: 0;
+  font-weight: 600;
+}
+
+.fila-resumen--total dt {
+  color: var(--color-texto);
+  font-weight: 700;
+}
+
+.resumen-compra__total {
+  font-family: var(--fuente-titulos);
+  font-size: 1.3rem;
+  color: var(--color-acento-texto);
+}
+
+.resumen-compra--lavanda .resumen-compra__total {
+  color: var(--color-primario-oscuro);
+}

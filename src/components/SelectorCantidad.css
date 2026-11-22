@@ -1,0 +1,33 @@
+.selector-cantidad {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-3);
+  padding: var(--espacio-1);
+  background: var(--color-tabla);
+  border-radius: var(--radio-pildora);
+}
+
+.selector-cantidad__boton {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: var(--color-superficie);
+  color: var(--color-primario);
+  box-shadow: var(--sombra);
+}
+
+.selector-cantidad__boton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.selector-cantidad__valor {
+  min-width: 32px;
+  text-align: center;
+  font-family: var(--fuente-titulos);
+  font-size: 1.25rem;
+  font-weight: 700;
+}

@@ -1,0 +1,22 @@
+.codigo-qr {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-md);
+}
+
+.codigo-qr__cargando {
+  width: 60%;
+  height: 60%;
+  border-radius: var(--radio-sm);
+  background: var(--color-tabla);
+  animation: parpadeo 1s ease-in-out infinite alternate;
+}
+
+@keyframes parpadeo {
+  to {
+    opacity: 0.4;
+  }
+}

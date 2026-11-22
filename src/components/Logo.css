@@ -1,0 +1,26 @@
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--color-texto);
+  font-family: var(--fuente-titulos);
+  font-weight: 700;
+  font-size: 1.3rem;
+  white-space: nowrap;
+}
+
+.logo--claro {
+  color: var(--color-texto-invertido);
+}
+
+.logo__marca {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radio-sm);
+  background: var(--color-acento);
+  color: #ffffff;
+  font-size: 0.95rem;
+}

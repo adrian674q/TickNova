@@ -1,0 +1,99 @@
+.barra-busqueda {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto auto;
+  align-items: center;
+  gap: var(--espacio-2);
+  padding: var(--espacio-2);
+  padding-left: var(--espacio-5);
+  background: var(--color-superficie);
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra);
+}
+
+.barra-busqueda__campo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  padding: var(--espacio-1) var(--espacio-4);
+  border-left: 1px solid var(--color-borde);
+}
+
+.barra-busqueda__campo--texto {
+  padding-left: 0;
+  border-left: none;
+}
+
+.barra-busqueda__etiqueta {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-texto-suave);
+}
+
+.barra-busqueda input,
+.barra-busqueda select {
+  width: 100%;
+  min-height: 28px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  font-size: 0.95rem;
+}
+
+.barra-busqueda input:focus-visible,
+.barra-busqueda select:focus-visible {
+  box-shadow: 0 2px 0 var(--color-primario);
+  border-radius: 0;
+}
+
+.barra-busqueda__boton {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: var(--radio-md);
+  background: var(--color-acento-fuerte);
+  color: #ffffff;
+}
+
+.barra-busqueda__boton:hover {
+  background: #b23d10;
+}
+
+@media (max-width: 899px) {
+  .barra-busqueda {
+    grid-template-columns: 1fr 1fr auto;
+    padding: var(--espacio-3) var(--espacio-3) var(--espacio-3) var(--espacio-4);
+  }
+
+  .barra-busqueda__campo--texto {
+    grid-column: 1 / -1;
+    padding-bottom: var(--espacio-2);
+    border-bottom: 1px solid var(--color-borde);
+  }
+
+  .barra-busqueda__campo:nth-of-type(2) {
+    padding-left: 0;
+    border-left: none;
+  }
+}
+
+/* En móvil solo queda el campo de texto, como en el prototipo. */
+@media (max-width: 599px) {
+  .barra-busqueda {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .barra-busqueda__campo--texto {
+    grid-column: auto;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+
+  .barra-busqueda__campo:not(.barra-busqueda__campo--texto) {
+    display: none;
+  }
+}

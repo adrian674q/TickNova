@@ -1,0 +1,36 @@
+.insignia {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.insignia--lavanda {
+  background: var(--color-lavanda);
+  color: var(--color-primario-oscuro);
+}
+
+.insignia--exito {
+  background: var(--color-verde-claro);
+  color: var(--color-verde-texto);
+}
+
+.insignia--aviso {
+  background: var(--color-amarillo);
+  color: var(--color-amarillo-texto);
+}
+
+.insignia--peligro {
+  background: var(--color-peligro-claro);
+  color: #8f3347;
+}
+
+.insignia--neutro {
+  background: var(--color-tabla);
+  color: var(--color-texto-suave);
+}

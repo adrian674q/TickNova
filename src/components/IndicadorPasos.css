@@ -1,0 +1,81 @@
+.indicador-pasos ol {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.indicador-pasos__paso {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  font-size: 0.8rem;
+  color: #e3e2f2;
+  white-space: nowrap;
+}
+
+.indicador-pasos__paso + .indicador-pasos__paso::before {
+  content: "";
+  width: 22px;
+  height: 1px;
+  margin-right: var(--espacio-1);
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.indicador-pasos__numero {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--color-primario-oscuro);
+  color: #ffffff;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.indicador-pasos__paso--actual {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.indicador-pasos__paso--actual .indicador-pasos__numero {
+  background: var(--color-acento);
+}
+
+.indicador-pasos__paso--completo .indicador-pasos__numero {
+  background: var(--color-verde-paso);
+  color: var(--color-primario-oscuro);
+}
+
+/* En tablet y móvil los pasos van en una barra blanca bajo el encabezado. */
+@media (max-width: 899px) {
+  .indicador-pasos ol {
+    justify-content: center;
+  }
+
+  .indicador-pasos__paso {
+    color: var(--color-texto);
+  }
+
+  .indicador-pasos__paso + .indicador-pasos__paso::before {
+    background: var(--color-borde-fuerte);
+  }
+}
+
+/* En móvil solo se muestra el paso actual, como en el prototipo. */
+@media (max-width: 599px) {
+  .indicador-pasos__paso:not(.indicador-pasos__paso--actual) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+  }
+
+  .indicador-pasos__paso + .indicador-pasos__paso::before {
+    display: none;
+  }
+}

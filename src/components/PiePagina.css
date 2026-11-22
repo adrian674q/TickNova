@@ -1,0 +1,73 @@
+.pie-pagina {
+  margin-top: auto;
+  padding: var(--espacio-7) 0;
+  background: var(--color-primario);
+  color: #e3e2f2;
+}
+
+.pie-pagina__contenido {
+  display: grid;
+  grid-template-columns: 1.6fr repeat(3, 1fr);
+  gap: var(--espacio-5);
+}
+
+.pie-pagina__marca p {
+  margin-top: var(--espacio-2);
+  font-size: 0.85rem;
+}
+
+.pie-pagina__columna h2 {
+  margin-bottom: var(--espacio-2);
+  font-family: var(--fuente-texto);
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.pie-pagina__columna ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pie-pagina__columna a,
+.pie-pagina__columna span {
+  display: inline-block;
+  padding: 3px 0;
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+
+.pie-pagina__columna a:hover {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
+@media (max-width: 899px) {
+  .pie-pagina__contenido {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .pie-pagina__marca {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 599px) {
+  .pie-pagina {
+    padding: var(--espacio-6) 0;
+  }
+
+  .pie-pagina__contenido {
+    grid-template-columns: 1fr auto;
+  }
+
+  .pie-pagina__marca {
+    grid-column: auto;
+  }
+
+  /* En móvil el prototipo solo muestra la columna "Cuenta". */
+  .pie-pagina__columna:not(:nth-child(3)) {
+    display: none;
+  }
+}
