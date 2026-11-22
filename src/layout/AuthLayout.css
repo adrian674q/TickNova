@@ -1,0 +1,156 @@
+.auth {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  min-height: 100vh;
+  background: var(--color-superficie);
+}
+
+.auth__marca {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-4);
+  padding: 90px clamp(24px, 5vw, 64px);
+  background: var(--color-primario);
+  color: #e3e2f2;
+}
+
+.auth__lema {
+  max-width: 18ch;
+  font-family: var(--fuente-titulos);
+  font-size: clamp(1.6rem, 1rem + 2vw, 2.6rem);
+  font-weight: 700;
+  line-height: 1.15;
+  color: #ffffff;
+}
+
+.auth__texto {
+  max-width: 44ch;
+}
+
+.auth__principal {
+  display: grid;
+  place-items: center;
+  padding: var(--espacio-6) var(--espacio-5);
+}
+
+.auth__principal:focus {
+  outline: none;
+}
+
+.auth-formulario {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-4);
+  width: 100%;
+  max-width: 400px;
+}
+
+.auth-formulario__titulo {
+  font-size: 1.6rem;
+}
+
+.auth-formulario__campos {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-4);
+}
+
+/* En escritorio el prototipo dice "Bienvenido"; en tablet y móvil, "Bienvenido de nuevo". */
+@media (min-width: 900px) {
+  .auth-formulario__extra {
+    display: none;
+  }
+}
+
+.auth-pestanas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 5px;
+  border-radius: var(--radio-md);
+  background: var(--color-tabla);
+}
+
+.auth-pestanas button {
+  min-height: 38px;
+  border: none;
+  border-radius: var(--radio-sm);
+  background: none;
+  color: var(--color-texto-suave);
+  font-size: 0.9rem;
+}
+
+.auth-pestanas button[aria-selected="true"] {
+  background: var(--color-superficie);
+  color: var(--color-texto);
+  font-weight: 600;
+  box-shadow: 0 1px 4px rgba(36, 36, 51, 0.08);
+}
+
+.auth-formulario__opciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-2);
+  font-size: 0.82rem;
+  color: var(--color-texto-suave);
+}
+
+.auth-formulario__opciones label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-2);
+}
+
+.auth-formulario__opciones input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--color-primario);
+}
+
+.auth-enlace {
+  color: var(--color-acento-texto);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.auth-enlace:hover {
+  text-decoration: underline;
+}
+
+.auth-exito {
+  padding: var(--espacio-3) var(--espacio-4);
+  border-radius: var(--radio-md);
+  background: var(--color-verde-claro);
+  color: var(--color-verde-texto);
+  font-size: 0.9rem;
+}
+
+@media (max-width: 899px) {
+  .auth {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    background: var(--color-fondo);
+  }
+
+  .auth__marca {
+    padding: var(--espacio-6) var(--espacio-5);
+    gap: var(--espacio-3);
+  }
+
+  .auth__lema {
+    max-width: 30ch;
+  }
+
+  .auth__principal {
+    align-items: center;
+    padding: var(--espacio-6) var(--espacio-4);
+  }
+
+  .auth-formulario {
+    padding: var(--espacio-5);
+    border-radius: var(--radio-lg);
+    background: var(--color-superficie);
+    box-shadow: var(--sombra);
+  }
+}

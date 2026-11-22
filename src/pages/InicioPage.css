@@ -1,0 +1,111 @@
+.inicio-heroe {
+  padding: var(--espacio-6) 0 var(--espacio-6);
+  background: var(--color-primario);
+}
+
+.inicio-heroe__subtitulo h2 {
+  color: #ffffff;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.inicio-heroe__subtitulo a {
+  color: #ffc9b3;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.inicio-heroe__subtitulo {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  margin: var(--espacio-5) 0 var(--espacio-3);
+  color: #ffffff;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.inicio-heroe__destacados {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--espacio-5);
+  margin: var(--espacio-5) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.inicio-heroe__promo {
+  display: none;
+}
+
+.inicio__filtros {
+  margin-bottom: var(--espacio-5);
+}
+
+@media (max-width: 899px) {
+  .inicio-heroe__destacados {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .inicio-heroe__destacados li:nth-child(3) {
+    display: none;
+  }
+
+  #musica .rejilla-eventos li:nth-child(n + 3) {
+    display: none;
+  }
+}
+
+@media (max-width: 599px) {
+  .inicio-heroe {
+    padding: var(--espacio-4) 0 var(--espacio-5);
+  }
+
+  .inicio-heroe__subtitulo {
+    position: static;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    width: auto;
+    height: auto;
+    clip: auto;
+  }
+
+  .inicio-heroe__destacados {
+    margin-top: 0;
+  }
+
+  .inicio-heroe__promo {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--espacio-2);
+    margin-top: var(--espacio-4);
+    padding: var(--espacio-5);
+    border-radius: var(--radio-lg);
+    background: var(--color-primario-claro);
+    color: #e3e2f2;
+  }
+
+  .inicio-heroe__promo h2 {
+    color: #ffffff;
+    font-weight: 700;
+  }
+
+  .inicio-heroe__destacados {
+    grid-template-columns: 1fr;
+  }
+
+  /* En móvil el inicio muestra menos secciones y tarjetas, como en el prototipo. */
+  .inicio-secciones .seccion-eventos:not(#resultados) .rejilla-eventos li:nth-child(n + 3) {
+    display: none;
+  }
+
+  #descubre,
+  #musica {
+    display: none;
+  }
+}

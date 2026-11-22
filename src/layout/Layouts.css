@@ -1,0 +1,120 @@
+.estructura {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.estructura__principal {
+  flex: 1;
+}
+
+.estructura__principal:focus {
+  outline: none;
+}
+
+/* ---------- Flujo de compra ---------- */
+
+.encabezado-compra {
+  background: var(--color-primario);
+  color: #ffffff;
+}
+
+.encabezado-compra__contenido {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-5);
+  min-height: 70px;
+}
+
+.encabezado-compra__volver {
+  display: none;
+  align-items: center;
+  gap: var(--espacio-1);
+  margin-left: auto;
+  color: #ffffff;
+  font-family: var(--fuente-titulos);
+  text-decoration: none;
+}
+
+.encabezado-compra__pasos-movil {
+  display: none;
+}
+
+@media (max-width: 899px) {
+  .encabezado-compra__pasos {
+    display: none;
+  }
+
+  .encabezado-compra__pasos-movil {
+    display: block;
+    padding: var(--espacio-3) 0;
+    background: #ffffff;
+  }
+}
+
+@media (max-width: 599px) {
+  .encabezado-compra__contenido {
+    min-height: 56px;
+  }
+
+  .encabezado-compra__volver {
+    display: inline-flex;
+  }
+}
+
+/* ---------- Panel de gestión ---------- */
+
+.estructura-admin {
+  display: grid;
+  grid-template-columns: 230px minmax(0, 1fr);
+  min-height: 100vh;
+  background: linear-gradient(to right, var(--color-primario) 230px, var(--color-fondo) 230px);
+}
+
+.estructura-admin__principal {
+  padding: var(--espacio-6) clamp(16px, 3vw, 40px) var(--espacio-7);
+  min-width: 0;
+}
+
+.estructura-admin__principal:focus {
+  outline: none;
+}
+
+.barra-movil-admin {
+  display: none;
+}
+
+@media (max-width: 899px) {
+  .estructura-admin {
+    grid-template-columns: 1fr;
+    align-content: start;
+    background: var(--color-fondo);
+  }
+
+  .barra-movil-admin {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 60px;
+    padding: 0 var(--espacio-4);
+    background: var(--color-primario);
+  }
+
+  .barra-movil-admin button {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    border: none;
+    background: none;
+    color: #ffffff;
+  }
+
+  .estructura-admin__principal {
+    padding-top: var(--espacio-5);
+  }
+}
