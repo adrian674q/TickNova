@@ -7,64 +7,72 @@ export const eventos = [
     hora: "20:00",
     lugar: "Estadio Cuscatlán",
     ciudad: "San Salvador",
-    imagen: "/img/eventos/artista-en-vivo.jpg",
+    imagen: "img/eventos/artista-en-vivo.jpg",
     descripcion: "Una noche llena de música en vivo, luces y entretenimiento para disfrutar con amigos.",
     estado: "agotado",
+    publicado: "2026-08-20",
+    destacado: false,
     zonas: [
-      { id: 1, nombre: "General", precio: 25, capacidad: 5000, disponibles: 0 },
-      { id: 2, nombre: "Preferencial", precio: 50, capacidad: 2000, disponibles: 0 },
-      { id: 3, nombre: "VIP", precio: 85, capacidad: 500, disponibles: 0 }
+      { id: 1, nombre: "General", descripcion: "Entrada libre", precio: 25, capacidad: 5000, disponibles: 0, numerada: false },
+      { id: 2, nombre: "Preferencial", descripcion: "Asiento numerado", precio: 50, capacidad: 2000, disponibles: 0, numerada: true },
+      { id: 3, nombre: "VIP", descripcion: "Incluye asiento numerado", precio: 85, capacidad: 500, disponibles: 0, numerada: true }
     ]
   },
   {
     id: 2,
     nombre: "Noche de concierto",
     categoria: "Música",
-    fecha: "2026-11-20",
+    fecha: "2026-12-04",
     hora: "19:30",
     lugar: "Teatro Nacional",
     ciudad: "San Salvador",
-    imagen: "/img/eventos/noche-de-concierto.jpg",
+    imagen: "img/eventos/noche-de-concierto.jpg",
     descripcion: "Una experiencia musical especial con artistas invitados y grandes interpretaciones.",
     estado: "pocos",
+    publicado: "2026-08-25",
+    destacado: false,
     zonas: [
-      { id: 1, nombre: "General", precio: 20, capacidad: 400, disponibles: 35 },
-      { id: 2, nombre: "Preferencial", precio: 35, capacidad: 200, disponibles: 12 },
-      { id: 3, nombre: "VIP", precio: 60, capacidad: 80, disponibles: 5 }
+      { id: 1, nombre: "General", descripcion: "Entrada libre", precio: 20, capacidad: 400, disponibles: 35, numerada: false },
+      { id: 2, nombre: "Preferencial", descripcion: "Asiento numerado", precio: 35, capacidad: 200, disponibles: 12, numerada: true },
+      { id: 3, nombre: "VIP", descripcion: "Incluye asiento numerado", precio: 60, capacidad: 80, disponibles: 5, numerada: true }
     ]
   },
   {
     id: 3,
     nombre: "Gran final",
     categoria: "Deportes",
-    fecha: "2026-11-22",
+    fecha: "2026-12-06",
     hora: "18:00",
     lugar: "Gimnasio Nacional",
     ciudad: "San Salvador",
-    imagen: "/img/eventos/gran-final.jpg",
+    imagen: "img/eventos/gran-final.jpg",
     descripcion: "La emoción del deporte llega a su máximo nivel en una final llena de energía.",
     estado: "disponible",
+    publicado: "2026-09-01",
+    destacado: false,
     zonas: [
-      { id: 1, nombre: "General", precio: 15, capacidad: 1500, disponibles: 900 },
-      { id: 2, nombre: "Preferencial", precio: 30, capacidad: 600, disponibles: 350 },
-      { id: 3, nombre: "VIP", precio: 50, capacidad: 150, disponibles: 80 }
+      { id: 1, nombre: "General", descripcion: "Entrada libre", precio: 15, capacidad: 1500, disponibles: 900, numerada: false },
+      { id: 2, nombre: "Preferencial", descripcion: "Asiento numerado", precio: 30, capacidad: 600, disponibles: 350, numerada: true },
+      { id: 3, nombre: "VIP", descripcion: "Incluye asiento numerado", precio: 50, capacidad: 150, disponibles: 80, numerada: true }
     ]
   },
   {
     id: 4,
     nombre: "Obra destacada",
     categoria: "Teatro",
-    fecha: "2026-11-27",
+    fecha: "2026-12-03",
     hora: "20:00",
     lugar: "Centro Cultural",
     ciudad: "San Salvador",
-    imagen: "/img/eventos/obra-destacada.jpg",
+    imagen: "img/eventos/obra-destacada.jpg",
     descripcion: "Una presentación teatral que combina talento, emoción y una historia inolvidable.",
     estado: "disponible",
+    publicado: "2026-09-05",
+    destacado: false,
     zonas: [
-      { id: 1, nombre: "General", precio: 15, capacidad: 250, disponibles: 180 },
-      { id: 2, nombre: "Preferencial", precio: 25, capacidad: 120, disponibles: 85 },
-      { id: 3, nombre: "VIP", precio: 40, capacidad: 50, disponibles: 30 }
+      { id: 1, nombre: "General", descripcion: "Entrada libre", precio: 15, capacidad: 250, disponibles: 180, numerada: false },
+      { id: 2, nombre: "Preferencial", descripcion: "Asiento numerado", precio: 25, capacidad: 120, disponibles: 85, numerada: true },
+      { id: 3, nombre: "VIP", descripcion: "Incluye asiento numerado", precio: 40, capacidad: 50, disponibles: 30, numerada: true }
     ]
   },
   {
@@ -75,13 +83,15 @@ export const eventos = [
     hora: "20:00",
     lugar: "Café Teatro",
     ciudad: "San Salvador",
-    imagen: "/img/eventos/gira-acustica.jpg",
+    imagen: "img/eventos/gira-acustica.jpg",
     descripcion: "Un concierto acústico íntimo para disfrutar de grandes canciones en un ambiente especial.",
     estado: "disponible",
+    publicado: "2026-11-12",
+    destacado: false,
     zonas: [
-      { id: 1, nombre: "General", precio: 15, capacidad: 150, disponibles: 100 },
-      { id: 2, nombre: "Preferencial", precio: 25, capacidad: 80, disponibles: 55 },
-      { id: 3, nombre: "VIP", precio: 40, capacidad: 30, disponibles: 20 }
+      { id: 1, nombre: "General", descripcion: "Entrada libre", precio: 15, capacidad: 150, disponibles: 100, numerada: false },
+      { id: 2, nombre: "Preferencial", descripcion: "Asiento numerado", precio: 25, capacidad: 80, disponibles: 55, numerada: true },
+      { id: 3, nombre: "VIP", descripcion: "Incluye asiento numerado", precio: 40, capacidad: 30, disponibles: 20, numerada: true }
     ]
   },
   {
@@ -92,13 +102,15 @@ export const eventos = [
     hora: "22:00",
     lugar: "Club Central",
     ciudad: "San Salvador",
-    imagen: "/img/eventos/dj-set-nocturno.jpg",
+    imagen: "img/eventos/dj-set-nocturno.jpg",
     descripcion: "Una noche de música electrónica con mezclas en vivo y un ambiente lleno de energía.",
     estado: "disponible",
+    publicado: "2026-11-14",
+    destacado: false,
     zonas: [
-      { id: 1, nombre: "General", precio: 20, capacidad: 500, disponibles: 350 },
-      { id: 2, nombre: "Preferencial", precio: 35, capacidad: 200, disponibles: 120 },
-      { id: 3, nombre: "VIP", precio: 60, capacidad: 80, disponibles: 45 }
+      { id: 1, nombre: "General", descripcion: "Entrada libre", precio: 20, capacidad: 500, disponibles: 350, numerada: false },
+      { id: 2, nombre: "Preferencial", descripcion: "Asiento numerado", precio: 35, capacidad: 200, disponibles: 120, numerada: true },
+      { id: 3, nombre: "VIP", descripcion: "Incluye asiento numerado", precio: 60, capacidad: 80, disponibles: 45, numerada: true }
     ]
   },
   {
@@ -109,13 +121,15 @@ export const eventos = [
     hora: "19:00",
     lugar: "Sala Mayor",
     ciudad: "San Salvador",
-    imagen: "/img/eventos/stand-up-comedy.jpg",
+    imagen: "img/eventos/stand-up-comedy.jpg",
     descripcion: "Una noche de humor con comediantes que prometen hacer reír al público.",
     estado: "disponible",
+    publicado: "2026-11-16",
+    destacado: false,
     zonas: [
-      { id: 1, nombre: "General", precio: 15, capacidad: 300, disponibles: 200 },
-      { id: 2, nombre: "Preferencial", precio: 25, capacidad: 150, disponibles: 90 },
-      { id: 3, nombre: "VIP", precio: 40, capacidad: 50, disponibles: 25 }
+      { id: 1, nombre: "General", descripcion: "Entrada libre", precio: 15, capacidad: 300, disponibles: 200, numerada: false },
+      { id: 2, nombre: "Preferencial", descripcion: "Asiento numerado", precio: 25, capacidad: 150, disponibles: 90, numerada: true },
+      { id: 3, nombre: "VIP", descripcion: "Incluye asiento numerado", precio: 40, capacidad: 50, disponibles: 25, numerada: true }
     ]
   },
   {
@@ -126,13 +140,15 @@ export const eventos = [
     hora: "17:00",
     lugar: "Teatro Nacional",
     ciudad: "San Salvador",
-    imagen: "/img/eventos/ballet-de-temporada.jpg",
+    imagen: "img/eventos/ballet-de-temporada.jpg",
     descripcion: "Una presentación artística de danza clásica con música y coreografías especiales.",
     estado: "disponible",
+    publicado: "2026-11-18",
+    destacado: false,
     zonas: [
-      { id: 1, nombre: "General", precio: 20, capacidad: 350, disponibles: 240 },
-      { id: 2, nombre: "Preferencial", precio: 35, capacidad: 180, disponibles: 100 },
-      { id: 3, nombre: "VIP", precio: 55, capacidad: 70, disponibles: 40 }
+      { id: 1, nombre: "General", descripcion: "Entrada libre", precio: 20, capacidad: 350, disponibles: 240, numerada: false },
+      { id: 2, nombre: "Preferencial", descripcion: "Asiento numerado", precio: 35, capacidad: 180, disponibles: 100, numerada: true },
+      { id: 3, nombre: "VIP", descripcion: "Incluye asiento numerado", precio: 55, capacidad: 70, disponibles: 40, numerada: true }
     ]
   },
   {
@@ -143,13 +159,15 @@ export const eventos = [
     hora: "19:00",
     lugar: "Parque Cuscatlán",
     ciudad: "San Salvador",
-    imagen: "/img/eventos/rock-en-el-parque.jpg",
+    imagen: "img/eventos/rock-en-el-parque.jpg",
     descripcion: "Un festival de rock al aire libre con bandas y mucha energía.",
     estado: "disponible",
+    publicado: "2026-10-02",
+    destacado: false,
     zonas: [
-      { id: 1, nombre: "General", precio: 15, capacidad: 2000, disponibles: 1500 },
-      { id: 2, nombre: "Preferencial", precio: 30, capacidad: 700, disponibles: 450 },
-      { id: 3, nombre: "VIP", precio: 50, capacidad: 200, disponibles: 120 }
+      { id: 1, nombre: "General", descripcion: "Entrada libre", precio: 15, capacidad: 2000, disponibles: 1500, numerada: false },
+      { id: 2, nombre: "Preferencial", descripcion: "Asiento numerado", precio: 30, capacidad: 700, disponibles: 450, numerada: true },
+      { id: 3, nombre: "VIP", descripcion: "Incluye asiento numerado", precio: 50, capacidad: 200, disponibles: 120, numerada: true }
     ]
   },
   {
@@ -160,13 +178,15 @@ export const eventos = [
     hora: "18:00",
     lugar: "Teatro Nacional",
     ciudad: "San Salvador",
-    imagen: "/img/eventos/sinfonica-nacional.jpg",
+    imagen: "img/eventos/sinfonica-nacional.jpg",
     descripcion: "Un concierto de música sinfónica con interpretaciones de grandes obras musicales.",
     estado: "disponible",
+    publicado: "2026-10-06",
+    destacado: false,
     zonas: [
-      { id: 1, nombre: "General", precio: 20, capacidad: 400, disponibles: 280 },
-      { id: 2, nombre: "Preferencial", precio: 35, capacidad: 200, disponibles: 130 },
-      { id: 3, nombre: "VIP", precio: 55, capacidad: 80, disponibles: 50 }
+      { id: 1, nombre: "General", descripcion: "Entrada libre", precio: 20, capacidad: 400, disponibles: 280, numerada: false },
+      { id: 2, nombre: "Preferencial", descripcion: "Asiento numerado", precio: 35, capacidad: 200, disponibles: 130, numerada: true },
+      { id: 3, nombre: "VIP", descripcion: "Incluye asiento numerado", precio: 55, capacidad: 80, disponibles: 50, numerada: true }
     ]
   },
   {
@@ -177,13 +197,15 @@ export const eventos = [
     hora: "20:00",
     lugar: "Estadio Cuscatlán",
     ciudad: "San Salvador",
-    imagen: "/img/eventos/pop-latino-fest.jpg",
+    imagen: "img/eventos/pop-latino-fest.jpg",
     descripcion: "Un festival de música pop latina con artistas invitados y grandes éxitos.",
     estado: "disponible",
+    publicado: "2026-10-10",
+    destacado: false,
     zonas: [
-      { id: 1, nombre: "General", precio: 30, capacidad: 5000, disponibles: 3500 },
-      { id: 2, nombre: "Preferencial", precio: 60, capacidad: 2000, disponibles: 1200 },
-      { id: 3, nombre: "VIP", precio: 100, capacidad: 500, disponibles: 250 }
+      { id: 1, nombre: "General", descripcion: "Entrada libre", precio: 30, capacidad: 5000, disponibles: 3500, numerada: false },
+      { id: 2, nombre: "Preferencial", descripcion: "Asiento numerado", precio: 60, capacidad: 2000, disponibles: 1200, numerada: true },
+      { id: 3, nombre: "VIP", descripcion: "Incluye asiento numerado", precio: 100, capacidad: 500, disponibles: 250, numerada: true }
     ]
   },
   {
@@ -194,14 +216,78 @@ export const eventos = [
     hora: "21:00",
     lugar: "Club Central",
     ciudad: "San Salvador",
-    imagen: "/img/eventos/indie-night.jpg",
+    imagen: "img/eventos/indie-night.jpg",
     descripcion: "Una noche dedicada a la música indie con bandas emergentes y sonidos alternativos.",
     estado: "disponible",
+    publicado: "2026-10-14",
+    destacado: false,
     zonas: [
-      { id: 1, nombre: "General", precio: 20, capacidad: 450, disponibles: 300 },
-      { id: 2, nombre: "Preferencial", precio: 35, capacidad: 180, disponibles: 110 },
-      { id: 3, nombre: "VIP", precio: 55, capacidad: 70, disponibles: 40 }
+      { id: 1, nombre: "General", descripcion: "Entrada libre", precio: 20, capacidad: 450, disponibles: 300, numerada: false },
+      { id: 2, nombre: "Preferencial", descripcion: "Asiento numerado", precio: 35, capacidad: 180, disponibles: 110, numerada: true },
+      { id: 3, nombre: "VIP", descripcion: "Incluye asiento numerado", precio: 55, capacidad: 70, disponibles: 40, numerada: true }
+    ]
+  },
+  {
+    id: 13,
+    nombre: "Festival de Primavera 2026",
+    categoria: "Música",
+    fecha: "2026-12-19",
+    hora: "19:00",
+    lugar: "Salamanca Eventos",
+    ciudad: "San Salvador",
+    imagen: "img/eventos/festival-de-primavera.jpg",
+    galeria: [
+      "img/eventos/festival-escenario.jpg",
+      "img/eventos/festival-mapa.jpg",
+      "img/eventos/festival-food-trucks.jpg",
+      "img/eventos/festival-zona-descanso.jpg"
+    ],
+    descripcion: "Una noche con los mejores artistas nacionales e internacionales. Puertas abiertas a las 6:00 PM. Evento para todas las edades con zonas accesibles y food trucks en el lobby.",
+    estado: "disponible",
+    publicado: "2026-11-01",
+    destacado: true,
+    zonas: [
+      { id: 1, nombre: "General", descripcion: "Entrada libre", precio: 15, capacidad: 4000, disponibles: 2600, numerada: false },
+      { id: 2, nombre: "Preferencial", descripcion: "Asiento numerado", precio: 30, capacidad: 1500, disponibles: 820, numerada: true },
+      { id: 3, nombre: "VIP", descripcion: "Incluye asiento numerado", precio: 50, capacidad: 400, disponibles: 320, numerada: true }
+    ]
+  },
+  {
+    id: 14,
+    nombre: "Noche de Jazz en Vivo",
+    categoria: "Música",
+    fecha: "2026-12-11",
+    hora: "19:30",
+    lugar: "Teatro Nacional",
+    ciudad: "San Salvador",
+    imagen: "img/eventos/noche-de-jazz.jpg",
+    descripcion: "Un recorrido por los clásicos del jazz con un cuarteto en vivo, improvisación y una atmósfera íntima.",
+    estado: "pocos",
+    publicado: "2026-10-20",
+    destacado: true,
+    zonas: [
+      { id: 1, nombre: "General", descripcion: "Entrada libre", precio: 25, capacidad: 300, disponibles: 18, numerada: false },
+      { id: 2, nombre: "Preferencial", descripcion: "Asiento numerado", precio: 40, capacidad: 150, disponibles: 9, numerada: true },
+      { id: 3, nombre: "VIP", descripcion: "Incluye asiento numerado", precio: 65, capacidad: 60, disponibles: 4, numerada: true }
+    ]
+  },
+  {
+    id: 15,
+    nombre: "Clásico de Básquetbol",
+    categoria: "Deportes",
+    fecha: "2026-12-20",
+    hora: "18:00",
+    lugar: "Gimnasio Nacional",
+    ciudad: "San Salvador",
+    imagen: "img/eventos/clasico-de-basquetbol.jpg",
+    descripcion: "El clásico de la temporada llega a la cancha: dos rivales históricos se enfrentan en un partido decisivo.",
+    estado: "disponible",
+    publicado: "2026-10-28",
+    destacado: true,
+    zonas: [
+      { id: 1, nombre: "General", descripcion: "Entrada libre", precio: 18, capacidad: 1800, disponibles: 1100, numerada: false },
+      { id: 2, nombre: "Preferencial", descripcion: "Asiento numerado", precio: 32, capacidad: 600, disponibles: 310, numerada: true },
+      { id: 3, nombre: "VIP", descripcion: "Incluye asiento numerado", precio: 55, capacidad: 150, disponibles: 70, numerada: true }
     ]
   }
 ];
-export default eventos;

@@ -1,7 +1,7 @@
 export const ordenes = [
   {
     id: 1,
-    usuarioId: 1,
+    usuarioId: 4,
     eventoId: 1,
     zonaId: 1,
     cantidad: 2,
@@ -12,7 +12,7 @@ export const ordenes = [
   },
   {
     id: 2,
-    usuarioId: 2,
+    usuarioId: 5,
     eventoId: 1,
     zonaId: 2,
     cantidad: 3,
@@ -34,7 +34,7 @@ export const ordenes = [
   },
   {
     id: 4,
-    usuarioId: 1,
+    usuarioId: 5,
     eventoId: 3,
     zonaId: 3,
     cantidad: 1,
@@ -45,7 +45,7 @@ export const ordenes = [
   },
   {
     id: 5,
-    usuarioId: 2,
+    usuarioId: 5,
     eventoId: 4,
     zonaId: 2,
     cantidad: 2,
@@ -67,7 +67,7 @@ export const ordenes = [
   },
   {
     id: 7,
-    usuarioId: 1,
+    usuarioId: 5,
     eventoId: 6,
     zonaId: 3,
     cantidad: 2,
@@ -78,7 +78,7 @@ export const ordenes = [
   },
   {
     id: 8,
-    usuarioId: 2,
+    usuarioId: 5,
     eventoId: 7,
     zonaId: 2,
     cantidad: 2,
@@ -100,7 +100,7 @@ export const ordenes = [
   },
   {
     id: 10,
-    usuarioId: 1,
+    usuarioId: 5,
     eventoId: 9,
     zonaId: 2,
     cantidad: 2,
@@ -111,7 +111,7 @@ export const ordenes = [
   },
   {
     id: 11,
-    usuarioId: 2,
+    usuarioId: 5,
     eventoId: 10,
     zonaId: 1,
     cantidad: 2,
@@ -133,7 +133,7 @@ export const ordenes = [
   },
   {
     id: 13,
-    usuarioId: 1,
+    usuarioId: 5,
     eventoId: 12,
     zonaId: 2,
     cantidad: 3,
@@ -144,7 +144,7 @@ export const ordenes = [
   },
   {
     id: 14,
-    usuarioId: 2,
+    usuarioId: 5,
     eventoId: 3,
     zonaId: 1,
     cantidad: 4,
@@ -166,7 +166,7 @@ export const ordenes = [
   },
   {
     id: 16,
-    usuarioId: 1,
+    usuarioId: 5,
     eventoId: 5,
     zonaId: 2,
     cantidad: 2,
@@ -177,7 +177,7 @@ export const ordenes = [
   },
   {
     id: 17,
-    usuarioId: 2,
+    usuarioId: 5,
     eventoId: 6,
     zonaId: 1,
     cantidad: 3,
@@ -199,7 +199,7 @@ export const ordenes = [
   },
   {
     id: 19,
-    usuarioId: 1,
+    usuarioId: 5,
     eventoId: 8,
     zonaId: 2,
     cantidad: 2,
@@ -210,7 +210,7 @@ export const ordenes = [
   },
   {
     id: 20,
-    usuarioId: 2,
+    usuarioId: 5,
     eventoId: 11,
     zonaId: 1,
     cantidad: 3,
@@ -218,7 +218,183 @@ export const ordenes = [
     fecha: "2026-11-18",
     estado: "pagada",
     codigo: "TN-0020"
+  },
+  {
+    id: 21,
+    usuarioId: 5,
+    eventoId: 1,
+    zonaId: 1,
+    cantidad: 4,
+    total: 100,
+    fecha: "2026-06-08",
+    estado: "pagada",
+    codigo: "TN-0021"
+  },
+  {
+    id: 22,
+    usuarioId: 5,
+    eventoId: 2,
+    zonaId: 3,
+    cantidad: 2,
+    total: 120,
+    fecha: "2026-06-15",
+    estado: "pagada",
+    codigo: "TN-0022"
+  },
+  {
+    id: 23,
+    usuarioId: 5,
+    eventoId: 3,
+    zonaId: 2,
+    cantidad: 3,
+    total: 90,
+    fecha: "2026-06-22",
+    estado: "pagada",
+    codigo: "TN-0023"
+  },
+  {
+    id: 24,
+    usuarioId: 5,
+    eventoId: 4,
+    zonaId: 1,
+    cantidad: 2,
+    total: 30,
+    fecha: "2026-06-29",
+    estado: "cancelada",
+    codigo: "TN-0024"
+  },
+  {
+    id: 25,
+    usuarioId: 5,
+    eventoId: 2,
+    zonaId: 2,
+    cantidad: 2,
+    total: 70,
+    fecha: "2026-07-06",
+    estado: "pagada",
+    codigo: "TN-0025"
+  },
+  {
+    id: 26,
+    usuarioId: 5,
+    eventoId: 1,
+    zonaId: 1,
+    cantidad: 5,
+    total: 125,
+    fecha: "2026-07-14",
+    estado: "pagada",
+    codigo: "TN-0026"
+  },
+  {
+    id: 27,
+    usuarioId: 5,
+    eventoId: 3,
+    zonaId: 3,
+    cantidad: 2,
+    total: 100,
+    fecha: "2026-07-21",
+    estado: "pagada",
+    codigo: "TN-0027"
+  },
+  {
+    id: 28,
+    usuarioId: 5,
+    eventoId: 4,
+    zonaId: 2,
+    cantidad: 4,
+    total: 100,
+    fecha: "2026-07-28",
+    estado: "pagada",
+    codigo: "TN-0028"
+  },
+  {
+    id: 29,
+    usuarioId: 5,
+    eventoId: 9,
+    zonaId: 1,
+    cantidad: 3,
+    total: 45,
+    fecha: "2026-08-04",
+    estado: "pagada",
+    codigo: "TN-0029"
+  },
+  {
+    id: 30,
+    usuarioId: 5,
+    eventoId: 10,
+    zonaId: 2,
+    cantidad: 2,
+    total: 70,
+    fecha: "2026-08-12",
+    estado: "pagada",
+    codigo: "TN-0030"
+  },
+  {
+    id: 31,
+    usuarioId: 5,
+    eventoId: 11,
+    zonaId: 1,
+    cantidad: 6,
+    total: 180,
+    fecha: "2026-08-19",
+    estado: "pagada",
+    codigo: "TN-0031"
+  },
+  {
+    id: 32,
+    usuarioId: 5,
+    eventoId: 12,
+    zonaId: 3,
+    cantidad: 2,
+    total: 110,
+    fecha: "2026-08-26",
+    estado: "pagada",
+    codigo: "TN-0032"
+  },
+  {
+    id: 33,
+    usuarioId: 4,
+    eventoId: 13,
+    zonaId: 3,
+    cantidad: 2,
+    asientos: ["B-07", "B-08"],
+    total: 100,
+    fecha: "2026-11-04",
+    estado: "pagada",
+    codigo: "TN-0033"
+  },
+  {
+    id: 34,
+    usuarioId: 5,
+    eventoId: 13,
+    zonaId: 1,
+    cantidad: 4,
+    total: 60,
+    fecha: "2026-11-11",
+    estado: "pagada",
+    codigo: "TN-0034"
+  },
+  {
+    id: 35,
+    usuarioId: 4,
+    eventoId: 14,
+    zonaId: 2,
+    cantidad: 1,
+    asientos: ["F-12"],
+    total: 40,
+    fecha: "2026-11-13",
+    estado: "pagada",
+    codigo: "TN-0035"
+  },
+  {
+    id: 36,
+    usuarioId: 5,
+    eventoId: 15,
+    zonaId: 2,
+    cantidad: 3,
+    total: 96,
+    fecha: "2026-11-19",
+    estado: "pagada",
+    codigo: "TN-0036"
   }
 ];
-
-export default ordenes;

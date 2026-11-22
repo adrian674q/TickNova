@@ -1,39 +1,42 @@
 export const usuarios = [
   {
     id: 1,
-    nombre: "Carlos Martínez",
-    correo: "carlos@ejemplo.com",
-    contrasena: "Cliente123",
-    rol: "cliente"
+    nombre: "Ariadna Franco",
+    correo: "ariadna@ejemplo.com",
+    contrasena: "Admin123",
+    rol: "administrador",
+    estado: "activo"
   },
   {
     id: 2,
-    nombre: "María López",
-    correo: "maria@ejemplo.com",
-    contrasena: "Cliente456",
-    rol: "cliente"
+    nombre: "Adrián Quintanilla",
+    correo: "adrian@ejemplo.com",
+    contrasena: "Admin456",
+    rol: "administrador",
+    estado: "activo"
   },
   {
     id: 3,
-    nombre: "Andrea Hernández",
-    correo: "andrea@ejemplo.com",
-    contrasena: "Admin123",
-    rol: "administrador"
+    nombre: "Fernanda Galdámez",
+    correo: "fernanda@ejemplo.com",
+    contrasena: "Organizador123",
+    rol: "organizador",
+    estado: "activo"
   },
   {
     id: 4,
-    nombre: "Roberto García",
-    correo: "roberto@ejemplo.com",
-    contrasena: "Organizador123",
-    rol: "organizador"
+    nombre: "Matt Murdock",
+    correo: "matt@ejemplo.com",
+    contrasena: "Cliente123",
+    rol: "cliente",
+    estado: "activo"
   },
   {
     id: 5,
-    nombre: "Sofía Ramírez",
-    correo: "sofia@ejemplo.com",
-    contrasena: "Cliente789",
-    rol: "cliente"
+    nombre: "Nayeli Ramírez",
+    correo: "nayeli@ejemplo.com",
+    contrasena: "Cliente456",
+    rol: "cliente",
+    estado: "activo"
   }
 ];
-
-export default usuarios;
