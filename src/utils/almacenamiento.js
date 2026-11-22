@@ -19,12 +19,3 @@ export function guardar(clave, valor){
     return false;
   }
 }
-export function eliminar(clave){
-  try{
-    localStorage.removeItem(clave);
-    return true;
-  } catch (error){
-    console.error("Error al eliminar los datos:", error);
-    return false;
-  }
-}
