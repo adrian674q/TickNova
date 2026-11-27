@@ -1,36 +1,36 @@
 # Arquitectura de componentes y flujo de estado
 
-Documento breve de la segunda entrega de TickNova (React 19 + Vite 8).
+Documento breve de la entrega final de TickNova (React 19, Vite 8, React Router 8 y PWA).
 
 ## Capas
 
 ```text
 main.jsx
-└── PreferenciasProvider → SesionProvider → CarritoProvider → NavegacionProvider → App.jsx
-    ├── AppLayout        Encabezado · página · PiePagina
-    │   ├── InicioPage, EventoDetallePage
-    │   └── MisBoletosPage, PerfilPage (requieren sesión)
-    ├── CompraLayout     encabezado con IndicadorPasos (paso 1 a 4 según la vista)
-    │   ├── SeleccionPage (1) → CarritoPage (2) → PagoPage (3) → ConfirmacionPage (4)
+└── PreferenciasProvider → SesionProvider → CarritoProvider → RouterProvider (router.jsx) + AvisoPWA
+    ├── AppLayout        Encabezado · AvisoConexion · Outlet · PiePagina
+    │   ├── InicioPage, EventosPage, EventoDetallePage, NotFoundPage
+    │   └── MisBoletosPage, PerfilPage (con RutaProtegida)
+    ├── CompraLayout     encabezado con IndicadorPasos (paso 1 a 4 según handle de la ruta)
+    │   └── SeleccionPage (1) → CarritoPage (2) → PagoPage /checkout (3) → ConfirmacionPage (4)
     ├── AuthLayout       panel de marca + formulario
     │   └── IngresarPage (ingresar / crear cuenta), RecuperarPage
-    └── AdminLayout      BarraLateral · página (solo administrador u organizador)
-        └── DashboardPage, AdminEventosPage, EventoFormPage (crear y editar),
-            InventarioPage, UsuariosPage (solo administrador), ReportesPage
+    └── AdminLayout      BarraLateral · Outlet (RutaProtegida: administrador u organizador)
+        └── páginas diferidas (lazy): DashboardPage, AdminEventosPage, EventoFormPage (crear y editar),
+            InventarioPage, UsuariosPage y ReportesPage (solo administrador)
 ```
 
 | Carpeta | Responsabilidad |
 |---|---|
-| `src/data` | Datos simulados iniciales (eventos, usuarios, órdenes). |
-| `src/api` | Servicios que simulan un servidor con promesas y `setTimeout`, validan y guardan en `localStorage`. |
-| `src/context` | Estado compartido: navegación, sesión, carrito y preferencias. |
-| `src/hooks` | `usePeticion` (carga/éxito/error con reintento y limpieza), `useEventos`, `useLocalStorage`, `useTitulo`. |
-| `src/components` | Componentes reutilizables del Design System (botones, campos, tarjetas, estados, tablas, gráficos). |
-| `src/layout` | Estructuras de página compartidas por grupos de vistas. |
-| `src/pages` | Vistas: combinan componentes, leen el contexto y llaman a los servicios. |
+| `public/api` | Datos de la API falsa en JSON. |
+| `src/api` | Acceso a datos: `fetch` con `AbortSignal`, latencia simulada, validaciones y escrituras en `localStorage`. |
+| `src/context` | Estado global con Context y `useReducer` (sesión, carrito y preferencias). |
+| `src/hooks` | `usePeticion` (carga/éxito/error, reintento y cancelación), `useEventos`, `useReducerPersistente`, `useTitulo`. |
+| `src/components` | Componentes reutilizables del Design System. |
+| `src/layout` | Estructuras compartidas por grupos de rutas (`Outlet`). |
+| `src/pages` | Vistas: leen la URL, el contexto y llaman a los servicios. |
 | `src/utils` | Funciones puras: formatos, filtros, asientos, reportes, validaciones. |
 
-Las vistas no acceden a `src/data` directamente para leer: lo hacen por medio de los servicios, igual que lo harían con una API.
+Los componentes no hacen `fetch` directamente: siempre pasan por los servicios de `src/api`.
 
 ## Flujo de estado
 
@@ -38,33 +38,29 @@ Las vistas no acceden a `src/data` directamente para leer: lo hacen por medio de
 flowchart LR
   subgraph Navegador
     LS[(localStorage)]
+    SW[Service worker y cachés]
   end
-  subgraph Contextos
-    N[NavegacionContext]
-    S[SesionContext]
-    C[CarritoContext]
-    P[PreferenciasContext]
-  end
-  API[api/*Service] --> |promesas simuladas| H[usePeticion]
+  JSON[public/api/*.json] --> |fetch + AbortSignal| API[src/api]
+  SW -.-> |NetworkFirst| JSON
+  API --> H[usePeticion]
   H --> V[Vistas]
-  V --> |agregar / quitar| C
-  V --> |ir a otra vista| N
-  V --> |iniciar o cerrar sesión| S
-  V --> |filtro de fechas, correo recordado| P
-  V --> |crearOrden, guardarEvento| API
+  V --> |dispatch AGREGAR / QUITAR / VACIAR| C[CarritoContext]
+  V --> |dispatch INICIAR_SESION / CERRAR_SESION| S[SesionContext]
+  V --> |dispatch CAMBIAR_PREFERENCIA| P[PreferenciasContext]
+  V --> |crearOrden, guardarEvento, eliminarEvento| API
   S <--> LS
   C <--> LS
   P <--> LS
   API <--> LS
 ```
 
-1. **Navegación.** `NavegacionContext` guarda la vista actual (`nombre` y `params`, por ejemplo `{ nombre: "detalle", params: { id: 3 } }`) y la conserva en `sessionStorage` al recargar. Los enlaces usan el componente `Enlace` y los botones la prop `vista`; ambos llaman a `ir(nombre, params)`. `App.jsx` elige la página y su estructura según la vista.
-2. **Consulta de datos.** Una vista llama a `usePeticion(() => servicio(), [dependencias])`. El hook devuelve `estado` (`cargando`, `exito` o `error`), `datos`, `error` y `reintentar`. Si las dependencias cambian o el componente se desmonta, el resultado anterior se ignora (limpieza del efecto).
-3. **Selección.** `SeleccionPage` guarda en estado local los asientos elegidos o la cantidad. El mapa de asientos se calcula con `generarMapaAsientos` a partir de la disponibilidad de la zona y de los asientos ya vendidos.
-4. **Carrito.** Al agregar, los boletos pasan a `CarritoContext`. Subtotal, cargo por servicio y total no se guardan: se calculan a partir de los items en cada render.
-5. **Pago.** `PagoPage` usa un formulario controlado con validación por campo. Mientras se procesa, el botón muestra "Procesando pago…" y queda bloqueado; una referencia (`useRef`) y el estado `procesando` impiden un segundo envío. Se crea una orden por cada combinación de evento y zona con `crearOrden`, que vuelve a validar disponibilidad y asientos.
-6. **Confirmación y boletos.** La vista de confirmación recibe los códigos de las órdenes y las carga por código, así sigue funcionando si se recarga. `CodigoQR` genera el código en el navegador con un efecto que se limpia al desmontar.
-7. **Panel.** Dashboard y reportes calculan sus indicadores con funciones puras de `utils/reportes.js` a partir de órdenes y eventos. Los eventos creados o editados se guardan con `guardarEvento` y aparecen en el listado público si están publicados.
+1. **Rutas.** `router.jsx` usa `createBrowserRouter` con `basename` (la app vive en `/TickNova/`). Los layouts muestran la página con `Outlet`. `RutaProtegida` revisa la sesión y el rol; sin sesión guarda la ruta de origen en `state.desde` para volver después de ingresar.
+2. **Consulta de datos.** `usePeticion((signal) => servicio({ signal }), [dependencias])` crea un `AbortController` por petición, devuelve `estado` (`cargando`, `exito` o `error`), `datos`, `error` y `reintentar`, y cancela la petición anterior si cambian las dependencias o se desmonta la vista.
+3. **Selección.** `SeleccionPage` lee el evento (`/eventos/:id`) y la zona (`?zona=`) de la URL, pide el evento y los asientos vendidos y guarda en estado local los asientos elegidos o la cantidad.
+4. **Carrito.** Al agregar se despacha `AGREGAR` al reducer del carrito. Subtotal, cargo y total se calculan en cada render.
+5. **Checkout.** `/checkout` es público, pero sin sesión pide ingresar y vuelve. El formulario es controlado y valida cada campo. Una referencia (`useRef`) y el estado `procesando` impiden un segundo envío. Se crea una orden por evento y zona con `crearOrden`, que vuelve a validar disponibilidad y asientos.
+6. **Confirmación y boletos.** `/confirmacion?codigos=` carga las órdenes por código, así funciona al recargar. `CodigoQR` genera el QR en el navegador con el código de la orden.
+7. **Panel.** Dashboard y reportes calculan sus valores con funciones puras de `utils/reportes.js` a partir de las órdenes; los reportes se filtran por evento y periodo. Crear, editar y eliminar eventos pasa por `eventosService`.
 
 ## Persistencia
 
@@ -74,11 +70,16 @@ flowchart LR
 | `ticknova_carrito` | Items del carrito. |
 | `ticknova_preferencias` | Filtro de fechas de Inicio y correo recordado. |
 | `ticknova_ordenes` | Compras realizadas en el navegador. |
-| `ticknova_eventos` | Eventos creados o editados en el panel. |
+| `ticknova_eventos` | Eventos creados, editados o eliminados en el panel. |
 | `ticknova_usuarios` | Cuentas registradas y cambios de perfil. |
 
-La vista actual se guarda aparte, en `sessionStorage` (`ticknova_vista`).
+## PWA
 
-## Vistas protegidas
+`vite-plugin-pwa` genera el manifest y el service worker. El app shell se guarda al instalar (precache); la API usa NetworkFirst, las imágenes CacheFirst y las rutas de la SPA caen en `index.html` (`navigateFallback`). `AvisoPWA` usa `useRegisterSW` para mostrar "nueva versión disponible" y "lista para usarse sin conexión"; `AvisoConexion` escucha los eventos `online` y `offline`.
 
-En `App.jsx` cada vista indica si requiere sesión o un rol. Sin sesión, una vista protegida muestra el formulario de ingreso y, al iniciar sesión, se abre la vista pedida (por ejemplo, el pago). Desde "Ingresar", el cliente va al inicio y el administrador u organizador al panel. El panel exige rol administrador u organizador y la vista de usuarios exige rol administrador; con otro rol se vuelve al inicio.
+## Decisiones
+
+- La API falsa lee JSON con `fetch` (y no módulos de JavaScript) para que el service worker pueda guardar sus respuestas y la app funcione sin conexión.
+- Eliminar un evento es una baja lógica para no perder ventas en los reportes ni boletos de los clientes.
+- Las páginas del panel se cargan de forma diferida porque solo las usan administradores y organizadores.
+- La nueva versión del service worker espera a que el usuario pulse "Actualizar", para no recargar la página en medio de una compra.
