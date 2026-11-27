@@ -1,7 +1,8 @@
 import { createContext, useContext, useMemo } from "react";
 import { CLAVES } from "../api/claves.js";
 import { CARGO_SERVICIO } from "../api/ordenesService.js";
-import { useLocalStorage } from "../hooks/useLocalStorage.js";
+import { useReducerPersistente } from "../hooks/useReducerPersistente.js";
+import { carritoReducer } from "./reductores.js";
 
 const CarritoContext = createContext(null);
 
@@ -10,8 +11,9 @@ function redondear(valor){
 }
 
 export function CarritoProvider({ children }){
-  const [items, setItems] = useLocalStorage(CLAVES.carrito, []);
+  const [items, dispatch] = useReducerPersistente(carritoReducer, CLAVES.carrito, []);
 
+  // Subtotal, cargo y total se calculan a partir de los items; no se guardan aparte.
   const valor = useMemo(() => {
     const subtotal = items.reduce((suma, item) => suma + item.precio * item.cantidad, 0);
     const cargo = redondear(subtotal * CARGO_SERVICIO);
@@ -23,28 +25,11 @@ export function CarritoProvider({ children }){
       subtotal,
       cargo,
       total: redondear(subtotal + cargo),
-      agregar: (nuevos) => setItems((actuales) => {
-        // Las entradas generales de la misma zona se acumulan en un solo item.
-        let resultado = actuales;
-        for (const nuevo of nuevos){
-          const id = `${nuevo.eventoId}-${nuevo.zonaId}-${nuevo.asiento || "general"}`;
-          const existente = resultado.find((item) => item.id === id);
-          if (existente){
-            resultado = resultado.map((item) =>
-              item.id === id
-                ? { ...item, cantidad: Math.min(item.cantidad + nuevo.cantidad, nuevo.maximo) }
-                : item
-            );
-          } else {
-            resultado = [...resultado, { ...nuevo, id }];
-          }
-        }
-        return resultado;
-      }),
-      quitar: (id) => setItems((actuales) => actuales.filter((item) => item.id !== id)),
-      vaciar: () => setItems([])
+      agregar: (nuevos) => dispatch({ type: "AGREGAR", items: nuevos }),
+      quitar: (id) => dispatch({ type: "QUITAR", id }),
+      vaciar: () => dispatch({ type: "VACIAR" })
     };
-  }, [items, setItems]);
+  }, [items, dispatch]);
 
   return <CarritoContext.Provider value={valor}>{children}</CarritoContext.Provider>;
 }

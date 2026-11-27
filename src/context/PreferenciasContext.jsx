@@ -1,6 +1,7 @@
 import { createContext, useContext, useMemo } from "react";
 import { CLAVES } from "../api/claves.js";
-import { useLocalStorage } from "../hooks/useLocalStorage.js";
+import { useReducerPersistente } from "../hooks/useReducerPersistente.js";
+import { preferenciasReducer } from "./reductores.js";
 
 const PreferenciasContext = createContext(null);
 
@@ -10,13 +11,12 @@ const PREFERENCIAS_INICIALES = {
 };
 
 export function PreferenciasProvider({ children }){
-  const [preferencias, setPreferencias] = useLocalStorage(CLAVES.preferencias, PREFERENCIAS_INICIALES);
+  const [preferencias, dispatch] = useReducerPersistente(preferenciasReducer, CLAVES.preferencias, PREFERENCIAS_INICIALES);
 
   const valor = useMemo(() => ({
     preferencias: { ...PREFERENCIAS_INICIALES, ...preferencias },
-    cambiarPreferencia: (clave, nuevoValor) =>
-      setPreferencias((actuales) => ({ ...actuales, [clave]: nuevoValor }))
-  }), [preferencias, setPreferencias]);
+    cambiarPreferencia: (clave, nuevoValor) => dispatch({ type: "CAMBIAR_PREFERENCIA", clave, valor: nuevoValor })
+  }), [preferencias, dispatch]);
 
   return <PreferenciasContext.Provider value={valor}>{children}</PreferenciasContext.Provider>;
 }
