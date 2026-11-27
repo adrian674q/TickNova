@@ -1,4 +1,4 @@
-import Enlace from "../../components/Enlace.jsx";
+import { Link } from "react-router";
 import { Cargando, EstadoVacio, MensajeError } from "../../components/Estados.jsx";
 import TablaDatos from "../../components/TablaDatos.jsx";
 import { useTitulo } from "../../hooks/useTitulo.js";
@@ -35,9 +35,9 @@ export default function InventarioPage(){
       titulo: "Acciones",
       alinear: "fin",
       render: (evento) => (
-        <Enlace className="admin-enlace" vista="admin-evento" params={{ id: evento.id }}>
+        <Link className="admin-enlace" to={`/admin/eventos/${evento.id}/editar`}>
           Editar<span className="solo-lectores"> {evento.nombre}</span>
-        </Enlace>
+        </Link>
       )
     }
   ];

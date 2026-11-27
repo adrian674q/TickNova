@@ -1,11 +1,10 @@
 import { useState } from "react";
+import { useNavigate, useParams } from "react-router";
 import { guardarEvento } from "../../api/eventosService.js";
-import { eventos as eventosBase } from "../../data/eventos.js";
 import Boton from "../../components/Boton.jsx";
 import Campo from "../../components/Campo.jsx";
 import { Cargando, MensajeError } from "../../components/Estados.jsx";
 import Icono from "../../components/Icono.jsx";
-import { useNavegacion } from "../../context/NavegacionContext.jsx";
 import { useTitulo } from "../../hooks/useTitulo.js";
 import { hoyIso } from "../../utils/formatos.js";
 import { rutaPublica } from "../../utils/rutas.js";
@@ -20,60 +19,112 @@ const ESTADOS = [
   { valor: "cancelado", etiqueta: "Cancelado" },
   { valor: "borrador", etiqueta: "Borrador" }
 ];
-const IMAGENES = [...new Set(eventosBase.map((evento) => evento.imagen))].map((imagen) => ({
-  valor: imagen,
-  etiqueta: eventosBase.find((evento) => evento.imagen === imagen).nombre
-}));
 const DESCRIPCION_ZONA = { VIP: "Incluye asiento numerado", Preferencial: "Asiento numerado", General: "Entrada libre" };
 const MAXIMO_LOCALIDADES = 5;
 
+// Cada fila de la tabla de localidades tiene una clave única para que React no mezcle las filas.
 let siguienteClave = 1;
-function nuevaLocalidad(nombre = "", precio = "", capacidad = ""){
-  return { clave: `n${siguienteClave++}`, nombre, precio, capacidad };
+function nuevaLocalidad(nombre = "", precio = "", capacidad = "", original = null){
+  return { clave: `n${siguienteClave++}`, nombre, precio, capacidad, original };
 }
 
-const LOCALIDADES_INICIALES = [
-  nuevaLocalidad("VIP", "", ""),
-  nuevaLocalidad("Preferencial", "", ""),
-  nuevaLocalidad("General", "", "")
-];
+// Una zona que ya existía y tiene boletos vendidos no se puede quitar.
+function tieneVentas(localidad){
+  return Boolean(localidad.original && localidad.original.disponibles < localidad.original.capacidad);
+}
 
-// La misma pantalla sirve para crear y para editar; al editar se elige el evento arriba.
+// Opciones del selector de imagen: las fotos que ya usan los eventos, sin repetir.
+function opcionesImagen(eventos){
+  return [...new Set(eventos.map((evento) => evento.imagen))].map((imagen) => ({
+    valor: imagen,
+    etiqueta: eventos.find((evento) => evento.imagen === imagen).nombre
+  }));
+}
+
+// Revisa el formulario y devuelve los errores encontrados (vacío si todo está bien).
+function validarFormulario(datos, localidades, revisarFechaPasada){
+  const errores = {};
+  if (datos.nombre.trim().length < 3) errores.nombre = "Escribe un nombre de al menos 3 caracteres.";
+  if (!datos.lugar.trim()) errores.lugar = "Indica el lugar del evento.";
+  if (!datos.fecha) errores.fecha = "Elige la fecha.";
+  else if (revisarFechaPasada && datos.fecha < hoyIso()) errores.fecha = "La fecha no puede estar en el pasado.";
+  if (!datos.hora) errores.hora = "Elige la hora.";
+  if (datos.descripcion.trim().length < 10) errores.descripcion = "Agrega una descripción breve (mínimo 10 caracteres).";
+
+  const problemas = [];
+  const nombresVistos = [];
+  localidades.forEach((l, i) => {
+    const numero = i + 1;
+    const nombre = l.nombre.trim().toLowerCase();
+    if (!nombre) problemas.push(`Localidad ${numero}: escribe un nombre.`);
+    else if (nombresVistos.includes(nombre)) problemas.push(`Localidad ${numero}: el nombre está repetido.`);
+    nombresVistos.push(nombre);
+    if (!(Number(l.precio) > 0)) problemas.push(`Localidad ${numero}: el precio debe ser mayor que 0.`);
+    if (!Number.isInteger(Number(l.capacidad)) || Number(l.capacidad) < 1) problemas.push(`Localidad ${numero}: los cupos deben ser un número entero mayor que 0.`);
+  });
+  if (problemas.length) errores.localidades = problemas;
+  return errores;
+}
+
+// Convierte las filas del formulario en las zonas que se guardan en el evento.
+// En pantalla van de VIP a General; en los datos se guardan al revés (General primero).
+function aZonas(localidades){
+  let siguienteId = Math.max(0, ...localidades.map((l) => l.original?.id || 0)) + 1;
+  return [...localidades].reverse().map((l) => {
+    const nombre = l.nombre.trim();
+    const capacidad = Number(l.capacidad);
+    // Si la zona ya existía, conserva su id y se descuentan los boletos que ya se vendieron.
+    const vendidos = l.original ? l.original.capacidad - l.original.disponibles : 0;
+    return {
+      id: l.original ? l.original.id : siguienteId++,
+      nombre,
+      descripcion: DESCRIPCION_ZONA[nombre] || "Entrada con boleto",
+      precio: Number(l.precio),
+      capacidad,
+      disponibles: Math.max(0, capacidad - vendidos),
+      numerada: nombre !== "General"
+    };
+  });
+}
+
+// La misma pantalla sirve para crear (/admin/eventos/nuevo) y para editar (/admin/eventos/:id/editar).
 export default function EventoFormPage(){
-  const { id, editar } = useNavegacion().vista.params;
-  const editando = Boolean(id || editar);
-  useTitulo(editando ? "Editar evento" : "Crear evento");
-
-  if (!editando) return <FormularioEvento />;
-  return <EdicionEvento id={id} />;
-}
-
-function EdicionEvento({ id }){
-  const { ir } = useNavegacion();
+  const { id } = useParams();
+  const navegar = useNavigate();
+  useTitulo(id ? "Editar evento" : "Crear evento");
   const { estado, datos, error, reintentar } = useDatosAdmin();
+
   if (estado === "cargando") return <Cargando texto="Cargando evento…" />;
   if (estado === "error") return <MensajeError mensaje={error} onReintentar={reintentar} />;
 
-  const eventos = eventosAdmin(datos.eventos);
-  const evento = datos.eventos.find((e) => e.id === Number(id)) || eventos[0];
-  const opciones = [...new Map([evento, ...eventos].map((e) => [e.id, { valor: String(e.id), etiqueta: e.nombre }])).values()];
+  const imagenes = opcionesImagen(datos.todos);
+  // Sin id en la ruta: formulario vacío para crear.
+  if (!id) return <FormularioEvento imagenes={imagenes} />;
+
+  const evento = datos.eventos.find((e) => e.id === Number(id));
+  if (!evento) return <MensajeError mensaje="No se encontró el evento solicitado." />;
+
+  // Selector "Evento a editar": los eventos del organizador (y el actual, si no está entre ellos).
+  const delOrganizador = eventosAdmin(datos.eventos);
+  const lista = delOrganizador.some((e) => e.id === evento.id) ? delOrganizador : [evento, ...delOrganizador];
+  const opciones = lista.map((e) => ({ valor: String(e.id), etiqueta: e.nombre }));
 
   return (
-    <FormularioEvento key={evento.id} evento={evento}>
+    <FormularioEvento key={evento.id} evento={evento} imagenes={imagenes}>
       <Campo
         className="form-evento__selector"
         etiqueta="Evento a editar"
         como="select"
         value={String(evento.id)}
-        onChange={(e) => ir("admin-evento", { id: Number(e.target.value) })}
+        onChange={(e) => navegar(`/admin/eventos/${e.target.value}/editar`)}
         opciones={opciones}
       />
     </FormularioEvento>
   );
 }
 
-function FormularioEvento({ evento, children }){
-  const { ir } = useNavegacion();
+function FormularioEvento({ evento, imagenes, children }){
+  const navegar = useNavigate();
   const editando = Boolean(evento);
   const [datos, setDatos] = useState({
     nombre: evento?.nombre || "",
@@ -82,16 +133,18 @@ function FormularioEvento({ evento, children }){
     fecha: evento?.fecha || "",
     hora: evento?.hora || "20:00",
     descripcion: evento?.descripcion || "",
-    imagen: evento?.imagen || IMAGENES[0].valor,
+    imagen: evento?.imagen || imagenes[0].valor,
     estado: evento?.estado || "disponible"
   });
+  // Al editar, cada fila recuerda su zona original; al crear, empiezan VIP, Preferencial y General vacías.
   const [localidades, setLocalidades] = useState(
     evento
-      ? [...evento.zonas].reverse().map((z) => ({ ...nuevaLocalidad(z.nombre, String(z.precio), String(z.capacidad)), original: z }))
-      : LOCALIDADES_INICIALES
+      ? [...evento.zonas].reverse().map((z) => nuevaLocalidad(z.nombre, String(z.precio), String(z.capacidad), z))
+      : [nuevaLocalidad("VIP"), nuevaLocalidad("Preferencial"), nuevaLocalidad("General")]
   );
   const [errores, setErrores] = useState({});
   const [errorGeneral, setErrorGeneral] = useState("");
+  // Qué botón se presionó: "borrador", "publicar" o "" (ninguno).
   const [guardando, setGuardando] = useState("");
 
   const capacidadTotal = localidades.reduce((suma, l) => suma + (Number(l.capacidad) || 0), 0);
@@ -105,31 +158,11 @@ function FormularioEvento({ evento, children }){
     setLocalidades(localidades.map((l) => (l.clave === clave ? { ...l, [campo]: valor } : l)));
   }
 
-  function validar(publicar){
-    const nuevos = {};
-    if (datos.nombre.trim().length < 3) nuevos.nombre = "Escribe un nombre de al menos 3 caracteres.";
-    if (!datos.lugar.trim()) nuevos.lugar = "Indica el lugar del evento.";
-    if (!datos.fecha) nuevos.fecha = "Elige la fecha.";
-    else if (publicar && !editando && datos.fecha < hoyIso()) nuevos.fecha = "La fecha no puede estar en el pasado.";
-    if (!datos.hora) nuevos.hora = "Elige la hora.";
-    if (datos.descripcion.trim().length < 10) nuevos.descripcion = "Agrega una descripción breve (mínimo 10 caracteres).";
-
-    const nombres = localidades.map((l) => l.nombre.trim().toLowerCase());
-    const erroresLocalidad = [];
-    localidades.forEach((l, i) => {
-      if (!l.nombre.trim()) erroresLocalidad.push(`Localidad ${i + 1}: escribe un nombre.`);
-      else if (nombres.indexOf(l.nombre.trim().toLowerCase()) !== i) erroresLocalidad.push(`Localidad ${i + 1}: el nombre está repetido.`);
-      if (!(Number(l.precio) > 0)) erroresLocalidad.push(`Localidad ${i + 1}: el precio debe ser mayor que 0.`);
-      if (!Number.isInteger(Number(l.capacidad)) || Number(l.capacidad) < 1) erroresLocalidad.push(`Localidad ${i + 1}: los cupos deben ser un número entero mayor que 0.`);
-    });
-    if (erroresLocalidad.length) nuevos.localidades = erroresLocalidad;
-    return nuevos;
-  }
-
   async function guardar(estadoDestino){
     if (guardando) return;
-    const publicar = estadoDestino !== "borrador";
-    const nuevos = validar(publicar);
+    const esBorrador = estadoDestino === "borrador";
+    // Al publicar un evento nuevo, la fecha no puede ser pasada.
+    const nuevos = validarFormulario(datos, localidades, !esBorrador && !editando);
     setErrores(nuevos);
     setErrorGeneral("");
     if (Object.keys(nuevos).length){
@@ -137,23 +170,7 @@ function FormularioEvento({ evento, children }){
       return;
     }
 
-    setGuardando(estadoDestino);
-    const zonas = [...localidades].reverse().map((l, i) => {
-      const capacidad = Number(l.capacidad);
-      const vendidos = l.original ? l.original.capacidad - l.original.disponibles : 0;
-      return {
-        id: l.original?.id ?? i + 1,
-        nombre: l.nombre.trim(),
-        descripcion: DESCRIPCION_ZONA[l.nombre.trim()] || "Entrada con boleto",
-        precio: Number(l.precio),
-        capacidad,
-        disponibles: Math.max(0, capacidad - vendidos),
-        numerada: l.nombre.trim() !== "General"
-      };
-    });
-    const ids = zonas.map((z) => z.id);
-    const zonasConId = zonas.map((z, i) => (ids.indexOf(z.id) !== i ? { ...z, id: Math.max(...ids) + i + 1 } : z));
-
+    setGuardando(esBorrador ? "borrador" : "publicar");
     try {
       const guardado = await guardarEvento({
         ...evento,
@@ -162,11 +179,11 @@ function FormularioEvento({ evento, children }){
         lugar: datos.lugar.trim(),
         descripcion: datos.descripcion.trim(),
         estado: estadoDestino,
-        zonas: zonasConId
+        zonas: aZonas(localidades)
       });
-      ir("admin-eventos", {
-        mensaje: estadoDestino === "borrador" ? `"${guardado.nombre}" se guardó como borrador.` : `"${guardado.nombre}" se guardó y está publicado.`
-      });
+      // Vuelve a la lista con un mensaje para mostrar arriba.
+      const mensaje = esBorrador ? `"${guardado.nombre}" se guardó como borrador.` : `"${guardado.nombre}" se guardó y está publicado.`;
+      navegar("/admin/eventos", { state: { mensaje } });
     } catch (error){
       setErrorGeneral(error.message);
       setGuardando("");
@@ -186,7 +203,7 @@ function FormularioEvento({ evento, children }){
               Guardar borrador
             </Boton>
           )}
-          <Boton type="submit" className="boton--pildora" cargando={Boolean(guardando) && guardando !== "borrador"} disabled={Boolean(guardando)}>
+          <Boton type="submit" className="boton--pildora" cargando={guardando === "publicar"} disabled={Boolean(guardando)}>
             {editando ? "Guardar cambios" : "Publicar evento"}
           </Boton>
         </div>
@@ -213,7 +230,7 @@ function FormularioEvento({ evento, children }){
           </div>
           <div className="form-evento__vista">
             <img src={rutaPublica(datos.imagen)} alt="Vista previa de la imagen del evento" />
-            <Campo etiqueta="Imagen del evento" como="select" name="imagen" value={datos.imagen} onChange={cambiar} opciones={IMAGENES} />
+            <Campo etiqueta="Imagen del evento" como="select" name="imagen" value={datos.imagen} onChange={cambiar} opciones={imagenes} />
           </div>
         </div>
       </section>
@@ -244,7 +261,7 @@ function FormularioEvento({ evento, children }){
                   type="button"
                   className="localidades__quitar"
                   onClick={() => setLocalidades(localidades.filter((x) => x.clave !== l.clave))}
-                  disabled={localidades.length === 1 || Boolean(l.original && l.original.capacidad !== l.original.disponibles)}
+                  disabled={localidades.length === 1 || tieneVentas(l)}
                   aria-label={`Quitar localidad ${l.nombre || i + 1}`}
                 >
                   <Icono nombre="cerrar" tamano={16} />

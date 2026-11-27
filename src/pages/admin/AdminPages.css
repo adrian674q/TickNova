@@ -328,3 +328,27 @@
 .form-evento__selector {
   max-width: 360px;
 }
+
+.admin-acciones {
+  display: inline-flex;
+  gap: var(--espacio-4);
+}
+
+button.admin-enlace {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.admin-enlace--peligro {
+  color: var(--color-peligro);
+}
+
+button.admin-enlace:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

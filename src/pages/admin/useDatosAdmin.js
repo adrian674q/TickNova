@@ -1,13 +1,14 @@
-import { obtenerEventos } from "../../api/eventosService.js";
+import { obtenerTodosLosEventos } from "../../api/eventosService.js";
 import { obtenerOrdenes } from "../../api/ordenesService.js";
 import { usePeticion } from "../../hooks/usePeticion.js";
 import { ordenarPorFecha } from "../../utils/filtros.js";
 
-// Carga eventos (incluidos borradores) y órdenes para las vistas del panel.
+// Carga eventos y órdenes para el panel. "eventos" son los vigentes (incluidos borradores);
+// "todos" también trae los eliminados, para que sus ventas sigan en los reportes.
 export function useDatosAdmin(){
   return usePeticion(
-    () => Promise.all([obtenerEventos({ incluirBorradores: true }), obtenerOrdenes()])
-      .then(([eventos, ordenes]) => ({ eventos, ordenes })),
+    (signal) => Promise.all([obtenerTodosLosEventos({ signal }), obtenerOrdenes({ signal })])
+      .then(([todos, ordenes]) => ({ todos, eventos: todos.filter((evento) => !evento.eliminado), ordenes })),
     []
   );
 }

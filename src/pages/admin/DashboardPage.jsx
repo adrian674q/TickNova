@@ -33,7 +33,7 @@ export default function DashboardPage(){
           <h1>Dashboard</h1>
           <p>Resumen general · {mesActual()}</p>
         </div>
-        <Boton variante="oscuro" tamano="pequeno" vista="admin-evento">+ Crear Evento</Boton>
+        <Boton variante="oscuro" tamano="pequeno" to="/admin/eventos/nuevo">+ Crear Evento</Boton>
       </div>
       {estado === "cargando" && <Cargando texto="Calculando indicadores…" />}
       {estado === "error" && <MensajeError mensaje={error} onReintentar={reintentar} />}

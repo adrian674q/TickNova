@@ -43,7 +43,7 @@ const COLUMNAS = [
 export default function UsuariosPage(){
   useTitulo("Usuarios");
   const [filtro, setFiltro] = useState("todos");
-  const { estado, datos, error, reintentar } = usePeticion(obtenerUsuarios, []);
+  const { estado, datos, error, reintentar } = usePeticion((signal) => obtenerUsuarios({ signal }), []);
   const usuarios = (datos || []).filter((u) => coincideFiltro(u, filtro));
 
   return (

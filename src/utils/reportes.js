@@ -109,3 +109,9 @@ export function compactarMoneda(valor){
 export function formatearVariacion(valor, sufijo = ""){
   return `${valor >= 0 ? "+" : ""}${valor}%${sufijo}`;
 }
+
+// Órdenes de los últimos "meses" meses, contando el mes actual.
+export function filtrarPorPeriodo(ordenes, meses, hoy = hoyIso()){
+  const desde = mesAnterior(mesDe(hoy), meses - 1);
+  return ordenes.filter((orden) => mesDe(orden.fecha) >= desde);
+}
