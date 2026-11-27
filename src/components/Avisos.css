@@ -1,0 +1,53 @@
+.aviso-conexion {
+  padding: var(--espacio-2) var(--espacio-4);
+  background: var(--color-amarillo);
+  color: var(--color-amarillo-texto);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.aviso-pwa {
+  position: fixed;
+  right: var(--espacio-4);
+  bottom: var(--espacio-4);
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-3);
+  max-width: 340px;
+  padding: var(--espacio-4);
+  border-radius: var(--radio-lg);
+  background: var(--color-primario);
+  color: var(--color-texto-invertido);
+  box-shadow: var(--sombra-fuerte);
+  font-size: 0.9rem;
+}
+
+.aviso-pwa__acciones {
+  display: flex;
+  gap: var(--espacio-2);
+  justify-content: flex-end;
+}
+
+.aviso-pwa__acciones button {
+  padding: var(--espacio-2) var(--espacio-4);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: var(--radio-pildora);
+  background: transparent;
+  color: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.aviso-pwa__acciones .aviso-pwa__principal {
+  border-color: var(--color-acento-fuerte);
+  background: var(--color-acento-fuerte);
+}
+
+@media (max-width: 599px) {
+  .aviso-pwa {
+    left: var(--espacio-4);
+    max-width: none;
+  }
+}

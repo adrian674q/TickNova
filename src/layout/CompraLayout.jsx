@@ -1,4 +1,5 @@
 import { Link, Outlet, useMatches } from "react-router";
+import AvisoConexion from "../components/AvisoConexion.jsx";
 import EnlaceSaltar from "../components/EnlaceSaltar.jsx";
 import Icono from "../components/Icono.jsx";
 import IndicadorPasos from "../components/IndicadorPasos.jsx";
@@ -29,6 +30,7 @@ export default function CompraLayout(){
       <div className="encabezado-compra__pasos-movil">
         <IndicadorPasos pasoActual={paso} />
       </div>
+      <AvisoConexion />
       <main id="contenido" className="estructura__principal" tabIndex={-1}>
         <Outlet />
       </main>

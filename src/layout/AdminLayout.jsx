@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Outlet, useNavigation } from "react-router";
+import AvisoConexion from "../components/AvisoConexion.jsx";
 import BarraLateral from "../components/BarraLateral.jsx";
 import EnlaceSaltar from "../components/EnlaceSaltar.jsx";
 import { Cargando } from "../components/Estados.jsx";
@@ -29,6 +30,7 @@ export default function AdminLayout(){
       </div>
       <BarraLateral abierta={abierta} id="barra-lateral" alNavegar={() => setAbierta(false)} />
       <main id="contenido" className="estructura-admin__principal" tabIndex={-1}>
+        <AvisoConexion />
         {state === "loading" ? <Cargando texto="Cargando sección…" /> : <Outlet />}
       </main>
     </div>

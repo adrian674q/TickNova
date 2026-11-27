@@ -1,6 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { RouterProvider } from "react-router/dom";
+import AvisoPWA from "./components/AvisoPWA.jsx";
 import { CarritoProvider } from "./context/CarritoContext.jsx";
 import { PreferenciasProvider } from "./context/PreferenciasContext.jsx";
 import { SesionProvider } from "./context/SesionContext.jsx";
@@ -13,6 +14,7 @@ createRoot(document.getElementById("root")).render(
       <SesionProvider>
         <CarritoProvider>
           <RouterProvider router={router} />
+          <AvisoPWA />
         </CarritoProvider>
       </SesionProvider>
     </PreferenciasProvider>
