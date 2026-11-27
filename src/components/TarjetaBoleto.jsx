@@ -1,4 +1,4 @@
-import { formatearDiaMes, formatearHora } from "../utils/formatos.js";
+import { formatearDiaMes, formatearHora, formatearMoneda } from "../utils/formatos.js";
 import CodigoQR from "./CodigoQR.jsx";
 import Insignia from "./Insignia.jsx";
 import { textoAsientos } from "../utils/boletos.js";
@@ -16,6 +16,7 @@ export default function TarjetaBoleto({ orden, evento, pasado = false }){
         <p className="tarjeta-boleto__detalle">
           {formatearDiaMes(evento.fecha)} · {formatearHora(evento.hora)} · {textoAsientos(orden, zona)}
         </p>
+        <p className="tarjeta-boleto__detalle">{formatearMoneda(orden.total)} · {orden.codigo}</p>
       </div>
     </article>
   );
