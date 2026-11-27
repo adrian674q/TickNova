@@ -1,32 +1,32 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
-// Ejecuta una petición simulada y expone carga, éxito o error; ignora resultados obsoletos.
+// Pide datos a la API falsa y devuelve el estado: "cargando", "exito" o "error".
+// Si cambian las dependencias o el componente desaparece, la petición anterior se cancela con AbortController.
 export function usePeticion(peticion, dependencias = []){
   const [intento, setIntento] = useState(0);
   const [resultado, setResultado] = useState({ clave: null, datos: null, error: null });
-  const ultimaPeticion = useRef(peticion);
-  const clave = `${JSON.stringify(dependencias)}:${intento}`;
+  // La clave identifica la petición actual: cambia si cambian las dependencias o al presionar Reintentar.
+  const clave = `${JSON.stringify(dependencias)}-${intento}`;
 
   useEffect(() => {
-    ultimaPeticion.current = peticion;
-  });
-
-  useEffect(() => {
-    let activo = true;
-    ultimaPeticion.current()
+    const controlador = new AbortController();
+    peticion(controlador.signal)
       .then((datos) => {
-        if (activo) setResultado({ clave, datos, error: null });
+        if (!controlador.signal.aborted) setResultado({ clave, datos, error: null });
       })
       .catch((error) => {
-        if (activo) setResultado({ clave, datos: null, error: error.message });
+        if (!controlador.signal.aborted) setResultado({ clave, datos: null, error: error.message });
       });
-    return () => {
-      activo = false;
-    };
+    return () => controlador.abort();
+    // La petición solo se repite cuando cambia la clave.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clave]);
 
-  const reintentar = useCallback(() => setIntento((n) => n + 1), []);
+  function reintentar(){
+    setIntento((anterior) => anterior + 1);
+  }
 
+  // Si el resultado guardado es de otra clave, la petición actual todavía no termina.
   let estado = "exito";
   if (resultado.clave !== clave) estado = "cargando";
   else if (resultado.error) estado = "error";

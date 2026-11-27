@@ -1,10 +1,11 @@
-import { usuarios } from "../data/usuarios.js";
 import { leer, guardar } from "../utils/almacenamiento.js";
-import { simularPeticion } from "../utils/simularPeticion.js";
 import { CORREO_VALIDO } from "../utils/validaciones.js";
 import { CLAVES } from "./claves.js";
+import { esperarEscritura, leerRecurso } from "./cliente.js";
 
-function listaCompleta(){
+// Usuarios del JSON más las cuentas registradas o editadas en este navegador.
+async function listaCompleta(opciones){
+  const usuarios = await leerRecurso("usuarios", opciones);
   const guardados = leer(CLAVES.usuarios, []);
   const base = usuarios.map(
     (usuario) => guardados.find((guardado) => guardado.id === usuario.id) || usuario
@@ -22,12 +23,12 @@ function sinContrasena(usuario){
 }
 
 export async function iniciarSesion(correo, contrasena){
-  const usuario = listaCompleta().find(
-    (usuario) =>
-      usuario.correo.toLowerCase() === correo.trim().toLowerCase() &&
-      usuario.contrasena === contrasena
+  const lista = await listaCompleta({ demora: 800 });
+  const usuario = lista.find(
+    (item) =>
+      item.correo.toLowerCase() === correo.trim().toLowerCase() &&
+      item.contrasena === contrasena
   );
-  await simularPeticion(null, 800);
 
   if (!usuario){
     throw new Error("Correo o contraseña incorrectos.");
@@ -48,9 +49,7 @@ export async function registrarUsuario({ nombre, correo, contrasena }){
   if (!contrasena || contrasena.length < 8){
     throw new Error("La contraseña debe tener al menos 8 caracteres.");
   }
-  await simularPeticion(null, 900);
-
-  const lista = listaCompleta();
+  const lista = await listaCompleta({ demora: 900 });
   const existe = lista.some(
     (usuario) => usuario.correo.toLowerCase() === correo.trim().toLowerCase()
   );
@@ -73,7 +72,7 @@ export async function recuperarContrasena(correo){
   if (!CORREO_VALIDO.test(correo)){
     throw new Error("El correo electrónico no es válido.");
   }
-  await simularPeticion(null, 900);
+  await esperarEscritura(900);
   return "Si el correo está registrado, recibirás un enlace para restablecer tu contraseña.";
 }
 
@@ -81,9 +80,8 @@ export async function actualizarPerfil(id, { nombre }){
   if (!nombre || nombre.trim().length < 3){
     throw new Error("Escribe tu nombre completo.");
   }
-  await simularPeticion(null, 700);
-
-  const usuario = listaCompleta().find((usuario) => usuario.id === Number(id));
+  const lista = await listaCompleta({ demora: 700 });
+  const usuario = lista.find((item) => item.id === Number(id));
   if (!usuario){
     throw new Error("No se encontró el usuario.");
   }
@@ -93,6 +91,7 @@ export async function actualizarPerfil(id, { nombre }){
   return sinContrasena(actualizado);
 }
 
-export function obtenerUsuarios(){
-  return simularPeticion(listaCompleta().map(sinContrasena), 800);
+export async function obtenerUsuarios({ signal } = {}){
+  const lista = await listaCompleta({ signal, demora: 800 });
+  return lista.map(sinContrasena);
 }

@@ -1,22 +1,17 @@
-import { eventos } from "../data/eventos.js";
 import { leer, guardar } from "../utils/almacenamiento.js";
-import { simularPeticion } from "../utils/simularPeticion.js";
 import { CLAVES } from "./claves.js";
+import { esperarEscritura, leerRecurso } from "./cliente.js";
 
 // Probabilidad de que la carga del listado falle, para mostrar el estado de error.
 const PROBABILIDAD_ERROR = 0.08;
 const ESTADOS_VALIDOS = ["disponible", "pocos", "agotado", "cancelado", "borrador"];
 
+// Descuenta de cada zona los boletos comprados en este navegador.
 function aplicarVentasGuardadas(evento){
   const ordenesGuardadas = leer(CLAVES.ordenes, []);
   const zonas = evento.zonas.map((zona) => {
     const vendidos = ordenesGuardadas
-      .filter(
-        (orden) =>
-          orden.eventoId === evento.id &&
-          orden.zonaId === zona.id &&
-          orden.estado === "pagada"
-      )
+      .filter((orden) => orden.eventoId === evento.id && orden.zonaId === zona.id && orden.estado === "pagada")
       .reduce((total, orden) => total + orden.cantidad, 0);
     return { ...zona, disponibles: Math.max(0, zona.disponibles - vendidos) };
   });
@@ -25,36 +20,31 @@ function aplicarVentasGuardadas(evento){
   return { ...evento, zonas, estado: sinBoletos ? "agotado" : evento.estado };
 }
 
-function listaCompleta(){
+// Une los eventos del JSON con los creados, editados o eliminados en el panel (localStorage).
+async function listaCompleta(opciones){
+  const base = await leerRecurso("eventos", opciones);
   const guardados = leer(CLAVES.eventos, []);
-  const base = eventos.map(
-    (evento) => guardados.find((guardado) => guardado.id === evento.id) || evento
-  );
-  const nuevos = guardados.filter(
-    (guardado) => !eventos.some((evento) => evento.id === guardado.id)
-  );
-  return [...base, ...nuevos].map(aplicarVentasGuardadas);
+  const combinados = base.map((evento) => guardados.find((guardado) => guardado.id === evento.id) || evento);
+  const nuevos = guardados.filter((guardado) => !base.some((evento) => evento.id === guardado.id));
+  return [...combinados, ...nuevos].map(aplicarVentasGuardadas);
 }
 
-export function buscarEvento(id){
-  return listaCompleta().find((evento) => evento.id === Number(id)) || null;
+// Listado de eventos visibles (sin eliminados). Los borradores solo se incluyen en el panel.
+export async function obtenerEventos({ incluirBorradores = false, signal } = {}){
+  const lista = await listaCompleta({ signal, demora: 800, probabilidadError: PROBABILIDAD_ERROR });
+  return lista.filter((evento) => !evento.eliminado && (incluirBorradores || evento.estado !== "borrador"));
 }
 
-export function obtenerEventos({ incluirBorradores = false } = {}){
-  const lista = listaCompleta().filter(
-    (evento) => incluirBorradores || evento.estado !== "borrador"
-  );
-  return simularPeticion(lista, 800, PROBABILIDAD_ERROR);
+// Todos los eventos, incluidos los eliminados, para mostrar boletos y reportes de compras anteriores.
+export function obtenerTodosLosEventos({ signal } = {}){
+  return listaCompleta({ signal, demora: 400 });
 }
 
-export function obtenerEventoPorId(id){
-  const evento = buscarEvento(id);
-  if (!evento){
-    return simularPeticion(null, 500).then(() => {
-      throw new Error("No se encontró el evento solicitado.");
-    });
-  }
-  return simularPeticion(evento, 500);
+export async function obtenerEventoPorId(id, { signal } = {}){
+  const lista = await listaCompleta({ signal });
+  const evento = lista.find((item) => item.id === Number(id) && !item.eliminado);
+  if (!evento) throw new Error("No se encontró el evento solicitado.");
+  return evento;
 }
 
 function validarEvento(datos){
@@ -75,13 +65,20 @@ function validarEvento(datos){
   }
 }
 
+function guardarCambio(evento){
+  const restantes = leer(CLAVES.eventos, []).filter((guardado) => guardado.id !== evento.id);
+  if (!guardar(CLAVES.eventos, [...restantes, evento])){
+    throw new Error("No se pudo guardar el evento.");
+  }
+}
+
+// Crea un evento nuevo o reemplaza uno existente.
 export async function guardarEvento(datos){
   validarEvento(datos);
-  await simularPeticion(null, 900);
+  const lista = await listaCompleta();
+  await esperarEscritura(900);
 
-  const guardados = leer(CLAVES.eventos, []);
-  const todos = [...eventos, ...guardados];
-  const id = datos.id || Math.max(0, ...todos.map((evento) => evento.id)) + 1;
+  const id = datos.id || Math.max(0, ...lista.map((evento) => evento.id)) + 1;
   const evento = {
     ...datos,
     id,
@@ -90,10 +87,16 @@ export async function guardarEvento(datos){
     publicado: datos.publicado || new Date().toISOString().slice(0, 10),
     destacado: Boolean(datos.destacado)
   };
-  const restantes = guardados.filter((guardado) => guardado.id !== id);
+  guardarCambio(evento);
+  return evento;
+}
 
-  if (!guardar(CLAVES.eventos, [...restantes, evento])){
-    throw new Error("No se pudo guardar el evento.");
-  }
+// Eliminación lógica: el evento deja de mostrarse, pero sus órdenes siguen en reportes y boletos.
+export async function eliminarEvento(id){
+  const lista = await listaCompleta();
+  const evento = lista.find((item) => item.id === Number(id));
+  if (!evento) throw new Error("No se encontró el evento.");
+  await esperarEscritura(700);
+  guardarCambio({ ...evento, eliminado: true });
   return evento;
 }

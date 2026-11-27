@@ -3,9 +3,9 @@ import { usePeticion } from "./usePeticion.js";
 
 export function useEventos(opciones = {}){
   const incluirBorradores = Boolean(opciones.incluirBorradores);
-  return usePeticion(() => obtenerEventos({ incluirBorradores }), [incluirBorradores]);
+  return usePeticion((signal) => obtenerEventos({ incluirBorradores, signal }), [incluirBorradores]);
 }
 
 export function useEvento(id){
-  return usePeticion(() => obtenerEventoPorId(id), [id]);
+  return usePeticion((signal) => obtenerEventoPorId(id, { signal }), [id]);
 }

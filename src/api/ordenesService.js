@@ -1,59 +1,47 @@
-import { ordenes } from "../data/ordenes.js";
 import { leer, guardar } from "../utils/almacenamiento.js";
-import { simularPeticion } from "../utils/simularPeticion.js";
 import { CLAVES } from "./claves.js";
-import { buscarEvento } from "./eventosService.js";
+import { esperarEscritura, leerRecurso } from "./cliente.js";
+import { obtenerEventoPorId } from "./eventosService.js";
 
 export const CARGO_SERVICIO = 0.06;
 
-function todasLasOrdenes(){
-  return [...ordenes, ...leer(CLAVES.ordenes, [])];
+// Órdenes del JSON más las compras hechas en este navegador.
+async function todasLasOrdenes(opciones){
+  const base = await leerRecurso("ordenes", opciones);
+  return [...base, ...leer(CLAVES.ordenes, [])];
 }
 
-export function obtenerOrdenes(){
-  return simularPeticion(todasLasOrdenes(), 800);
+export function obtenerOrdenes({ signal } = {}){
+  return todasLasOrdenes({ signal, demora: 800 });
 }
 
-export function obtenerOrdenesPorUsuario(usuarioId){
-  const lista = todasLasOrdenes().filter(
-    (orden) => orden.usuarioId === Number(usuarioId)
-  );
-  return simularPeticion(lista, 700);
+export async function obtenerOrdenesPorUsuario(usuarioId, { signal } = {}){
+  const lista = await todasLasOrdenes({ signal, demora: 700 });
+  return lista.filter((orden) => orden.usuarioId === Number(usuarioId));
 }
 
-export function obtenerOrdenPorCodigo(codigo){
-  const orden = todasLasOrdenes().find((orden) => orden.codigo === codigo);
-  if (!orden){
-    return simularPeticion(null, 500).then(() => {
-      throw new Error("No se encontró el boleto solicitado.");
-    });
-  }
-  return simularPeticion(orden, 500);
+export async function obtenerOrdenPorCodigo(codigo, { signal } = {}){
+  const lista = await todasLasOrdenes({ signal });
+  const orden = lista.find((item) => item.codigo === codigo);
+  if (!orden) throw new Error("No se encontró el boleto solicitado.");
+  return orden;
 }
 
-export function obtenerAsientosVendidos(eventoId, zonaId){
-  return todasLasOrdenes()
-    .filter(
-      (orden) =>
-        orden.eventoId === Number(eventoId) &&
-        orden.zonaId === Number(zonaId) &&
-        orden.estado === "pagada"
-    )
+export async function obtenerAsientosVendidos(eventoId, zonaId, { signal } = {}){
+  const lista = await todasLasOrdenes({ signal, demora: 300 });
+  return lista
+    .filter((orden) => orden.eventoId === Number(eventoId) && orden.zonaId === Number(zonaId) && orden.estado === "pagada")
     .flatMap((orden) => orden.asientos || []);
 }
 
+// Valida disponibilidad y asientos antes de registrar la compra.
 export async function crearOrden(datosCompra){
   const { usuarioId, eventoId, zonaId, cantidad, asientos = [] } = datosCompra;
-  const evento = buscarEvento(eventoId);
-  if (!evento){
-    throw new Error("El evento seleccionado no existe.");
-  }
+  const evento = await obtenerEventoPorId(eventoId);
   if (["agotado", "cancelado", "borrador"].includes(evento.estado)){
     throw new Error("Este evento no está disponible para comprar.");
   }
-  const zona = evento.zonas.find(
-    (zona) => zona.id === Number(zonaId)
-  );
+  const zona = evento.zonas.find((item) => item.id === Number(zonaId));
   if (!zona){
     throw new Error("La zona seleccionada no existe.");
   }
@@ -63,18 +51,15 @@ export async function crearOrden(datosCompra){
   if (cantidad > zona.disponibles){
     throw new Error("No hay suficientes boletos disponibles.");
   }
-  const vendidos = obtenerAsientosVendidos(evento.id, zona.id);
+  const vendidos = await obtenerAsientosVendidos(evento.id, zona.id);
   if (asientos.some((asiento) => vendidos.includes(asiento))){
     throw new Error("Uno de los asientos seleccionados ya fue vendido.");
   }
 
-  await simularPeticion(null, 1000);
+  const lista = await todasLasOrdenes({ demora: 0 });
+  await esperarEscritura(1000);
 
-  const ordenesGuardadas = leer(CLAVES.ordenes, []);
-  const nuevoId = Math.max(
-    0,
-    ...todasLasOrdenes().map((orden) => orden.id)
-  ) + 1;
+  const nuevoId = Math.max(0, ...lista.map((orden) => orden.id)) + 1;
   const total = zona.precio * cantidad;
   const nuevaOrden = {
     id: nuevoId,
@@ -90,12 +75,7 @@ export async function crearOrden(datosCompra){
     codigo: `TN-${String(nuevoId).padStart(4, "0")}`
   };
 
-  const seGuardo = guardar(CLAVES.ordenes, [
-    ...ordenesGuardadas,
-    nuevaOrden
-  ]);
-
-  if (!seGuardo) {
+  if (!guardar(CLAVES.ordenes, [...leer(CLAVES.ordenes, []), nuevaOrden])){
     throw new Error("No se pudo guardar la compra.");
   }
   return nuevaOrden;
