@@ -1,4 +1,4 @@
-import Enlace from "./Enlace.jsx";
+import { Link } from "react-router";
 import "./Migas.css";
 
 export default function Migas({ elementos }){
@@ -9,9 +9,9 @@ export default function Migas({ elementos }){
           const ultimo = indice === elementos.length - 1;
           return (
             <li key={elemento.texto}>
-              {ultimo || !elemento.vista
+              {ultimo || !elemento.to
                 ? <span aria-current={ultimo ? "page" : undefined}>{elemento.texto}</span>
-                : <Enlace vista={elemento.vista} params={elemento.params}>{elemento.texto}</Enlace>}
+                : <Link to={elemento.to}>{elemento.texto}</Link>}
             </li>
           );
         })}

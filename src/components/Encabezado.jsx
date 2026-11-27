@@ -1,30 +1,32 @@
 import { useState } from "react";
-import { useNavegacion } from "../context/NavegacionContext.jsx";
+import { Link, useLocation, useMatches } from "react-router";
 import { useSesion } from "../context/SesionContext.jsx";
-import Enlace from "./Enlace.jsx";
 import Icono from "./Icono.jsx";
 import Logo from "./Logo.jsx";
 import "./Encabezado.css";
 
-// "Eventos" y "Categorías" muestran en Inicio todos los eventos o los de música.
+// "Categorías" lleva a los filtros por categoría de /eventos.
 const ENLACES = [
-  { texto: "Inicio", vista: "inicio", params: {} },
-  { texto: "Eventos", vista: "inicio", params: { busqueda: {} } },
-  { texto: "Categorías", vista: "inicio", params: { busqueda: { categoria: "Música" } } },
-  { texto: "Mis boletos", vista: "mis-boletos", params: {} }
+  { texto: "Inicio", to: "/" },
+  { texto: "Eventos", to: "/eventos" },
+  { texto: "Categorías", to: "/eventos#categorias" },
+  { texto: "Mis boletos", to: "/boletos" }
 ];
 
-export default function Encabezado({ volver }){
-  const { usuario, puedeGestionar } = useSesion();
-  const { vista } = useNavegacion();
-  const [menuAbierto, setMenuAbierto] = useState(false);
-  const [vistaMenu, setVistaMenu] = useState(vista);
+function estaActivo(enlace, { pathname, hash }){
+  if (enlace.to === "/") return pathname === "/";
+  if (enlace.to === "/eventos") return pathname === "/eventos" && hash !== "#categorias";
+  if (enlace.to === "/eventos#categorias") return pathname === "/eventos" && hash === "#categorias";
+  return pathname.startsWith(enlace.to);
+}
 
-  // Al cambiar de vista se cierra el menú móvil.
-  if (vistaMenu !== vista){
-    setVistaMenu(vista);
-    setMenuAbierto(false);
-  }
+export default function Encabezado(){
+  const { usuario, puedeGestionar } = useSesion();
+  const ubicacion = useLocation();
+  // La página actual puede pedir un botón "volver" en lugar del menú (handle.volver en router.jsx).
+  const ruta = useMatches().at(-1);
+  const volver = ruta.handle?.volver ? ruta.handle : null;
+  const [menuAbierto, setMenuAbierto] = useState(false);
 
   return (
     <header className="encabezado">
@@ -33,17 +35,17 @@ export default function Encabezado({ volver }){
         <nav className={`encabezado__nav ${menuAbierto ? "encabezado__nav--abierta" : ""}`} id="navegacion-principal" aria-label="Navegación principal">
           <ul>
             {ENLACES.map((enlace) => {
-              const activo = vista.nombre === enlace.vista && JSON.stringify(vista.params) === JSON.stringify(enlace.params);
+              const activo = estaActivo(enlace, ubicacion);
               return (
                 <li key={enlace.texto}>
-                  <Enlace
-                    vista={enlace.vista}
-                    params={enlace.params}
-                    activo={activo}
+                  <Link
+                    to={enlace.to}
+                    onClick={() => setMenuAbierto(false)}
+                    aria-current={activo ? "page" : undefined}
                     className={`encabezado__enlace ${activo ? "encabezado__enlace--activo" : ""}`}
                   >
                     {enlace.texto}
-                  </Enlace>
+                  </Link>
                 </li>
               );
             })}
@@ -51,15 +53,15 @@ export default function Encabezado({ volver }){
         </nav>
         <div className={`encabezado__acciones ${volver ? "encabezado__acciones--volver" : ""}`}>
           {/* El avatar lleva a Ingresar, a Mi perfil (cliente) o al panel (administrador u organizador). */}
-          <Enlace vista={!usuario ? "ingresar" : puedeGestionar ? "admin" : "perfil"} className="encabezado__avatar">
+          <Link to={!usuario ? "/ingresar" : puedeGestionar ? "/admin" : "/perfil"} className="encabezado__avatar">
             <Icono nombre="usuario" tamano={22} />
             <span className="solo-lectores">{!usuario ? "Ingresar" : puedeGestionar ? "Panel de gestión" : "Mi perfil"}</span>
-          </Enlace>
+          </Link>
           {volver && (
-            <Enlace vista={volver.vista} className="encabezado__volver">
+            <Link to={volver.volver} className="encabezado__volver">
               <Icono nombre="atras" tamano={18} />
               {volver.titulo}
-            </Enlace>
+            </Link>
           )}
           <button
             type="button"

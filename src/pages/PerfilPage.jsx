@@ -1,10 +1,10 @@
 import { useState } from "react";
+import { useNavigate } from "react-router";
 import Avatar from "../components/Avatar.jsx";
 import Boton from "../components/Boton.jsx";
 import Campo from "../components/Campo.jsx";
 import { MensajeError } from "../components/Estados.jsx";
 import Insignia from "../components/Insignia.jsx";
-import { useNavegacion } from "../context/NavegacionContext.jsx";
 import { useSesion } from "../context/SesionContext.jsx";
 import { useTitulo } from "../hooks/useTitulo.js";
 import { ROLES } from "../utils/estados.js";
@@ -12,7 +12,7 @@ import "./PerfilPage.css";
 
 export default function PerfilPage(){
   useTitulo("Mi perfil");
-  const { ir } = useNavegacion();
+  const navegar = useNavigate();
   const { usuario, actualizarPerfil, cerrarSesion } = useSesion();
   const [nombre, setNombre] = useState(usuario.nombre);
   const [error, setError] = useState("");
@@ -41,8 +41,9 @@ export default function PerfilPage(){
     }
   }
 
-  function salir(){
-    ir("inicio");
+  async function salir(){
+    // Primero se sale de la ruta protegida y luego se borra la sesión; así no se redirige a "Ingresar".
+    await navegar("/", { flushSync: true });
     cerrarSesion();
   }
 

@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { useNavegacion } from "../context/NavegacionContext.jsx";
+import { useNavigate } from "react-router";
 import { OPCIONES_FECHA } from "../utils/filtros.js";
 import Icono from "./Icono.jsx";
 import "./BarraBusqueda.css";
 
 export default function BarraBusqueda({ ciudades = [], valoresIniciales = {} }){
-  const { ir } = useNavegacion();
+  const navegar = useNavigate();
   const [valores, setValores] = useState({
     texto: valoresIniciales.texto || "",
     fecha: valoresIniciales.fecha || "todas",
@@ -18,7 +18,12 @@ export default function BarraBusqueda({ ciudades = [], valoresIniciales = {} }){
 
   function buscar(evento){
     evento.preventDefault();
-    ir("inicio", { busqueda: { ...valores, texto: valores.texto.trim() } });
+    // La búsqueda se guarda en la URL de /eventos (?q=&fecha=&ciudad=).
+    const parametros = new URLSearchParams();
+    if (valores.texto.trim()) parametros.set("q", valores.texto.trim());
+    if (valores.fecha !== "todas") parametros.set("fecha", valores.fecha);
+    if (valores.ciudad !== "todas") parametros.set("ciudad", valores.ciudad);
+    navegar(`/eventos?${parametros.toString()}`);
   }
 
   return (

@@ -1,12 +1,13 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
+import { useNavigate, useParams, useSearchParams } from "react-router";
 import { obtenerAsientosVendidos } from "../api/ordenesService.js";
 import Boton from "../components/Boton.jsx";
 import { Cargando, MensajeError } from "../components/Estados.jsx";
 import MapaAsientos from "../components/MapaAsientos.jsx";
 import SelectorCantidad from "../components/SelectorCantidad.jsx";
 import { useCarrito } from "../context/CarritoContext.jsx";
-import { useNavegacion } from "../context/NavegacionContext.jsx";
-import { useEvento } from "../hooks/useEventos.js";
+import { obtenerEventoPorId } from "../api/eventosService.js";
+import { usePeticion } from "../hooks/usePeticion.js";
 import { useTitulo } from "../hooks/useTitulo.js";
 import { generarMapaAsientos } from "../utils/asientos.js";
 import { nombreZona } from "../utils/boletos.js";
@@ -17,9 +18,16 @@ const MAXIMO_POR_COMPRA = 8;
 
 export default function SeleccionPage(){
   useTitulo("Selección de boletos");
-  const { id, zona: zonaId } = useNavegacion().vista.params;
-  const { estado, datos: evento, error, reintentar } = useEvento(id);
-  const zona = evento?.zonas.find((z) => z.id === Number(zonaId));
+  const { id } = useParams();
+  const [parametros] = useSearchParams();
+  const zonaId = Number(parametros.get("zona"));
+  // El evento y los asientos ya vendidos se piden juntos a la API falsa.
+  const { estado, datos, error, reintentar } = usePeticion(
+    (signal) => Promise.all([obtenerEventoPorId(id, { signal }), obtenerAsientosVendidos(id, zonaId, { signal })]),
+    [id, zonaId]
+  );
+  const [evento, vendidos] = datos || [];
+  const zona = evento?.zonas.find((z) => z.id === zonaId);
 
   return (
     <div className="contenedor pagina">
@@ -28,13 +36,13 @@ export default function SeleccionPage(){
       {estado === "exito" && !zona && (
         <MensajeError mensaje="La zona seleccionada no existe. Vuelve al evento y elige otra." />
       )}
-      {estado === "exito" && zona && <Seleccion key={`${evento.id}-${zona.id}`} evento={evento} zona={zona} />}
+      {estado === "exito" && zona && <Seleccion key={`${evento.id}-${zona.id}`} evento={evento} zona={zona} vendidos={vendidos} />}
     </div>
   );
 }
 
-function Seleccion({ evento, zona }){
-  const { ir } = useNavegacion();
+function Seleccion({ evento, zona, vendidos }){
+  const navegar = useNavigate();
   const { items, agregar } = useCarrito();
   const [asientos, setAsientos] = useState([]);
   const [cantidad, setCantidad] = useState(1);
@@ -42,14 +50,9 @@ function Seleccion({ evento, zona }){
   const enCarrito = items.filter((item) => item.eventoId === evento.id && item.zonaId === zona.id);
   const maximo = Math.min(zona.disponibles - enCarrito.reduce((s, i) => s + i.cantidad, 0), MAXIMO_POR_COMPRA);
 
-  const filas = useMemo(() => {
-    const ocupados = [
-      ...obtenerAsientosVendidos(evento.id, zona.id),
-      ...enCarrito.map((item) => item.asiento).filter(Boolean)
-    ];
-    return generarMapaAsientos(evento, zona, ocupados);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [evento, zona]);
+  // Ocupados: los ya vendidos más los que ya están en tu carrito.
+  const ocupados = [...vendidos, ...enCarrito.map((item) => item.asiento).filter(Boolean)];
+  const filas = generarMapaAsientos(ocupados);
 
   const boletos = zona.numerada ? asientos.length : cantidad;
   const total = boletos * zona.precio;
@@ -82,7 +85,7 @@ function Seleccion({ evento, zona }){
     } else {
       agregar([{ ...base, asiento: null, cantidad }]);
     }
-    ir("carrito");
+    navegar("/carrito");
   }
 
   return (

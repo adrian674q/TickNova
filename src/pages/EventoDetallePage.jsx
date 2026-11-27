@@ -1,10 +1,10 @@
 import { useState } from "react";
+import { useNavigate, useParams } from "react-router";
 import Boton from "../components/Boton.jsx";
 import { Cargando, MensajeError } from "../components/Estados.jsx";
 import { InsigniaEstado } from "../components/Insignia.jsx";
 import Migas from "../components/Migas.jsx";
 import TarjetaZona from "../components/TarjetaZona.jsx";
-import { useNavegacion } from "../context/NavegacionContext.jsx";
 import { useEvento } from "../hooks/useEventos.js";
 import { useTitulo } from "../hooks/useTitulo.js";
 import { formatearFechaCorta, formatearHora } from "../utils/formatos.js";
@@ -12,7 +12,7 @@ import { rutaPublica } from "../utils/rutas.js";
 import "./EventoDetallePage.css";
 
 export default function EventoDetallePage(){
-  const { id } = useNavegacion().vista.params;
+  const { id } = useParams();
   const { estado, datos: evento, error, reintentar } = useEvento(id);
   useTitulo(evento?.nombre || "Evento");
 
@@ -26,7 +26,7 @@ export default function EventoDetallePage(){
 }
 
 function DetalleEvento({ evento }){
-  const { ir } = useNavegacion();
+  const navegar = useNavigate();
   const zonasOrdenadas = [...evento.zonas].reverse();
   const disponibles = zonasOrdenadas.filter((zona) => zona.disponibles > 0);
   const [zonaId, setZonaId] = useState(disponibles[0]?.id ?? null);
@@ -35,14 +35,14 @@ function DetalleEvento({ evento }){
 
   function seleccionarBoletos(eventoFormulario){
     eventoFormulario.preventDefault();
-    if (sePuedeComprar) ir("seleccion", { id: evento.id, zona: zonaId });
+    if (sePuedeComprar) navegar(`/eventos/${evento.id}/boletos?zona=${zonaId}`);
   }
 
   return (
     <>
       <Migas elementos={[
-        { texto: "Eventos", vista: "inicio", params: { busqueda: {} } },
-        { texto: evento.categoria, vista: "inicio", params: { busqueda: { categoria: evento.categoria } } },
+        { texto: "Eventos", to: "/eventos" },
+        { texto: evento.categoria, to: `/eventos?categoria=${encodeURIComponent(evento.categoria)}` },
         { texto: evento.nombre }
       ]} />
 

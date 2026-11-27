@@ -1,24 +1,24 @@
-import Enlace from "./Enlace.jsx";
+import { Link } from "react-router";
 import Logo from "./Logo.jsx";
 import "./PiePagina.css";
 
-// Los textos sin vista se muestran como en el prototipo, sin enlace.
+// Los textos sin ruta se muestran como en el prototipo, sin enlace.
 const COLUMNAS = [
   {
     titulo: "Explorar",
     enlaces: [
-      { vista: "inicio", params: { busqueda: { categoria: "Música" } }, texto: "Conciertos" },
-      { vista: "inicio", params: { busqueda: { categoria: "Deportes" } }, texto: "Deportes" },
-      { vista: "inicio", params: { busqueda: { categoria: "Teatro" } }, texto: "Teatro" },
-      { vista: "inicio", params: { busqueda: { categoria: "Familia" } }, texto: "Familia" }
+      { to: "/eventos?categoria=Música", texto: "Conciertos" },
+      { to: "/eventos?categoria=Deportes", texto: "Deportes" },
+      { to: "/eventos?categoria=Teatro", texto: "Teatro" },
+      { to: "/eventos?categoria=Familia", texto: "Familia" }
     ]
   },
   {
     titulo: "Cuenta",
     enlaces: [
-      { vista: "ingresar", texto: "Iniciar sesión" },
-      { vista: "ingresar", params: { modo: "registro" }, texto: "Crear cuenta" },
-      { vista: "mis-boletos", texto: "Mis boletos" },
+      { to: "/ingresar", texto: "Iniciar sesión" },
+      { to: "/ingresar?modo=registro", texto: "Crear cuenta" },
+      { to: "/boletos", texto: "Mis boletos" },
       { texto: "Ayuda" }
     ]
   },
@@ -46,7 +46,7 @@ export default function PiePagina(){
             <ul>
               {columna.enlaces.map((enlace) => (
                 <li key={enlace.texto}>
-                  {enlace.vista ? <Enlace vista={enlace.vista} params={enlace.params}>{enlace.texto}</Enlace> : <span>{enlace.texto}</span>}
+                  {enlace.to ? <Link to={enlace.to}>{enlace.texto}</Link> : <span>{enlace.texto}</span>}
                 </li>
               ))}
             </ul>

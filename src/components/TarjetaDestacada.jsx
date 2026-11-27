@@ -1,6 +1,6 @@
 import { formatearFechaEvento } from "../utils/formatos.js";
 import { rutaPublica } from "../utils/rutas.js";
-import Enlace from "./Enlace.jsx";
+import { Link } from "react-router";
 import "./TarjetaDestacada.css";
 
 export default function TarjetaDestacada({ evento }){
@@ -10,7 +10,7 @@ export default function TarjetaDestacada({ evento }){
       <div className="tarjeta-destacada__cuerpo">
         <p className="tarjeta-destacada__fecha">{formatearFechaEvento(evento.fecha, evento.hora)}</p>
         <h3 className="tarjeta-destacada__nombre">
-          <Enlace vista="detalle" params={{ id: evento.id }}>{evento.nombre}</Enlace>
+          <Link to={`/eventos/${evento.id}`}>{evento.nombre}</Link>
         </h3>
         <p className="tarjeta-destacada__lugar">{evento.lugar}</p>
       </div>

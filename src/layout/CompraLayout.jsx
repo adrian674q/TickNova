@@ -1,12 +1,16 @@
+import { Link, Outlet, useMatches } from "react-router";
 import EnlaceSaltar from "../components/EnlaceSaltar.jsx";
-import Enlace from "../components/Enlace.jsx";
 import Icono from "../components/Icono.jsx";
 import IndicadorPasos from "../components/IndicadorPasos.jsx";
 import Logo from "../components/Logo.jsx";
 import "./Layouts.css";
 
-// Flujo de compra con el progreso de cuatro pasos.
-export default function CompraLayout({ paso, titulo, volver, children }){
+// Flujo de compra con el progreso de cuatro pasos; cada ruta indica su paso en handle (router.jsx).
+export default function CompraLayout(){
+  const ruta = useMatches().at(-1);
+  const { paso, titulo, volver } = ruta.handle;
+  const destino = typeof volver === "function" ? volver(ruta.params) : volver;
+
   return (
     <div className="estructura">
       <EnlaceSaltar />
@@ -16,17 +20,17 @@ export default function CompraLayout({ paso, titulo, volver, children }){
           <div className="encabezado-compra__pasos">
             <IndicadorPasos pasoActual={paso} />
           </div>
-          <Enlace vista={volver.vista} params={volver.params} className="encabezado-compra__volver">
+          <Link to={destino} className="encabezado-compra__volver">
             <Icono nombre="atras" tamano={18} />
             {titulo}
-          </Enlace>
+          </Link>
         </div>
       </header>
       <div className="encabezado-compra__pasos-movil">
         <IndicadorPasos pasoActual={paso} />
       </div>
       <main id="contenido" className="estructura__principal" tabIndex={-1}>
-        {children}
+        <Outlet />
       </main>
     </div>
   );

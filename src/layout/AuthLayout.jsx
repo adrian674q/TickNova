@@ -1,8 +1,9 @@
+import { Outlet } from "react-router";
 import EnlaceSaltar from "../components/EnlaceSaltar.jsx";
 import Logo from "../components/Logo.jsx";
 import "./AuthLayout.css";
 
-export default function AuthLayout({ children }){
+export default function AuthLayout(){
   return (
     <div className="auth">
       <EnlaceSaltar />
@@ -12,7 +13,7 @@ export default function AuthLayout({ children }){
         <p className="auth__texto">Compra boletos para conciertos, teatro y deportes con código QR al instante.</p>
       </section>
       <main id="contenido" className="auth__principal" tabIndex={-1}>
-        {children}
+        <Outlet />
       </main>
     </div>
   );

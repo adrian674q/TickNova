@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { buscarEvento } from "../api/eventosService.js";
+import { obtenerTodosLosEventos } from "../api/eventosService.js";
 import { obtenerOrdenesPorUsuario } from "../api/ordenesService.js";
 import Boton from "../components/Boton.jsx";
 import Chips from "../components/Chips.jsx";
@@ -21,14 +21,15 @@ export default function MisBoletosPage(){
   const { usuario } = useSesion();
   const [pestana, setPestana] = useState("proximos");
   const { estado, datos, error, reintentar } = usePeticion(
-    () => obtenerOrdenesPorUsuario(usuario.id),
+    (signal) => Promise.all([obtenerOrdenesPorUsuario(usuario.id, { signal }), obtenerTodosLosEventos({ signal })]),
     [usuario.id]
   );
+  const [ordenes, eventos] = datos || [[], []];
 
   const hoy = hoyIso();
-  const boletos = (datos || [])
+  const boletos = ordenes
     .filter((orden) => orden.estado === "pagada")
-    .map((orden) => ({ orden, evento: buscarEvento(orden.eventoId) }))
+    .map((orden) => ({ orden, evento: eventos.find((evento) => evento.id === orden.eventoId) }))
     .filter(({ evento }) => evento)
     .sort((a, b) => a.evento.fecha.localeCompare(b.evento.fecha));
   const proximos = boletos.filter(({ evento }) => evento.fecha >= hoy);
@@ -58,7 +59,7 @@ export default function MisBoletosPage(){
           )}
           {pestana === "proximos" && proximos.length === 0 && (
             <EstadoVacio titulo="No tienes boletos próximos" texto="Cuando compres un boleto aparecerá aquí.">
-              <Boton vista="inicio" tamano="pequeno">Explorar eventos</Boton>
+              <Boton to="/eventos" tamano="pequeno">Explorar eventos</Boton>
             </EstadoVacio>
           )}
           {pestana === "pasados" && pasados.length === 0 && (

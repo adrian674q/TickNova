@@ -1,4 +1,4 @@
-import Enlace from "./Enlace.jsx";
+import { Link } from "react-router";
 import "./Boton.css";
 
 export default function Boton({
@@ -6,8 +6,7 @@ export default function Boton({
   variante = "primario",
   tamano = "normal",
   ancho = false,
-  vista,
-  params,
+  to,
   cargando = false,
   disabled = false,
   className = "",
@@ -21,8 +20,8 @@ export default function Boton({
     className
   ].filter(Boolean).join(" ");
 
-  if (vista){
-    return <Enlace vista={vista} params={params} className={clases} {...props}>{children}</Enlace>;
+  if (to){
+    return <Link to={to} className={clases} {...props}>{children}</Link>;
   }
 
   return (

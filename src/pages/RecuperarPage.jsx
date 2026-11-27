@@ -1,8 +1,8 @@
 import { useState } from "react";
+import { Link } from "react-router";
 import { recuperarContrasena } from "../api/usuariosService.js";
 import Boton from "../components/Boton.jsx";
 import Campo from "../components/Campo.jsx";
-import Enlace from "../components/Enlace.jsx";
 import { MensajeError } from "../components/Estados.jsx";
 import { useTitulo } from "../hooks/useTitulo.js";
 import { CORREO_VALIDO } from "../utils/validaciones.js";
@@ -52,7 +52,7 @@ export default function RecuperarPage(){
         required
       />
       <Boton type="submit" ancho cargando={enviando}>{enviando ? "Enviando…" : "Enviar enlace"}</Boton>
-      <Enlace className="auth-enlace" vista="ingresar">Volver a ingresar</Enlace>
+      <Link className="auth-enlace" to="/ingresar">Volver a ingresar</Link>
     </form>
   );
 }

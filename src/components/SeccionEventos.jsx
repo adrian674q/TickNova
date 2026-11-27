@@ -1,4 +1,4 @@
-import Enlace from "./Enlace.jsx";
+import { Link } from "react-router";
 import TarjetaEvento from "./TarjetaEvento.jsx";
 import "./SeccionEventos.css";
 
@@ -7,7 +7,7 @@ export default function SeccionEventos({ id, titulo, eventos, verTodo, acento = 
     <section className="seccion-eventos" id={id} aria-label={titulo}>
       <div className="seccion-eventos__cabecera">
         <h2 className={`seccion-eventos__titulo seccion-eventos__titulo--${acento}`}>{titulo}</h2>
-        {verTodo && <Enlace className="seccion-eventos__ver" vista="inicio" params={verTodo}>Ver todo<span className="solo-lectores">: {titulo}</span></Enlace>}
+        {verTodo && <Link className="seccion-eventos__ver" to={verTodo}>Ver todo<span className="solo-lectores">: {titulo}</span></Link>}
       </div>
       {children}
       {eventos && (

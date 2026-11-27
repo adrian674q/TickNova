@@ -1,19 +1,32 @@
 import { useState } from "react";
+import { Link, Navigate, useLocation, useSearchParams } from "react-router";
 import Boton from "../components/Boton.jsx";
 import Campo from "../components/Campo.jsx";
-import Enlace from "../components/Enlace.jsx";
 import { MensajeError } from "../components/Estados.jsx";
-import { useNavegacion } from "../context/NavegacionContext.jsx";
 import { usePreferencias } from "../context/PreferenciasContext.jsx";
 import { useSesion } from "../context/SesionContext.jsx";
 import { useTitulo } from "../hooks/useTitulo.js";
 import { CORREO_VALIDO } from "../utils/validaciones.js";
 
-// Al iniciar sesión, App abre la vista que corresponde (la pedida o la del rol).
+// Después de ingresar se vuelve a la ruta pedida (por ejemplo /checkout) o a la de cada rol.
+function destinoPorRol(usuario, desde){
+  if (desde) return desde;
+  return usuario.rol === "cliente" ? "/" : "/admin";
+}
+
 export default function IngresarPage(){
-  const { vista } = useNavegacion();
-  const [modo, setModo] = useState(vista.params.modo === "registro" ? "registro" : "ingreso");
+  const [parametros, setParametros] = useSearchParams();
+  const modo = parametros.get("modo") === "registro" ? "registro" : "ingreso";
   useTitulo(modo === "registro" ? "Crear cuenta" : "Ingresar");
+  const { usuario } = useSesion();
+  const ubicacion = useLocation();
+
+  if (usuario) return <Navigate to={destinoPorRol(usuario, ubicacion.state?.desde)} replace />;
+
+  // Cambia la pestaña en la URL sin perder la ruta de origen.
+  function cambiarModo(nuevo){
+    setParametros(nuevo === "registro" ? { modo: "registro" } : {}, { replace: true, state: ubicacion.state });
+  }
 
   return (
     <div className="auth-formulario">
@@ -32,7 +45,7 @@ export default function IngresarPage(){
           id="pestana-ingreso"
           aria-selected={modo === "ingreso"}
           aria-controls="panel-acceso"
-          onClick={() => setModo("ingreso")}
+          onClick={() => cambiarModo("ingreso")}
         >
           Ingresar
         </button>
@@ -42,7 +55,7 @@ export default function IngresarPage(){
           id="pestana-registro"
           aria-selected={modo === "registro"}
           aria-controls="panel-acceso"
-          onClick={() => setModo("registro")}
+          onClick={() => cambiarModo("registro")}
         >
           Crear cuenta
         </button>
@@ -101,7 +114,7 @@ function FormularioIngreso(){
           <input type="checkbox" name="recordar" checked={datos.recordar} onChange={cambiar} />
           Recuérdame
         </label>
-        <Enlace className="auth-enlace" vista="recuperar">¿Olvidaste tu contraseña?</Enlace>
+        <Link className="auth-enlace" to="/recuperar">¿Olvidaste tu contraseña?</Link>
       </div>
       <Boton type="submit" ancho cargando={enviando}>{enviando ? "Ingresando…" : "Ingresar"}</Boton>
     </form>

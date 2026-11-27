@@ -1,11 +1,11 @@
 import { useRef, useState } from "react";
+import { useNavigate } from "react-router";
 import { crearOrden } from "../api/ordenesService.js";
 import Boton from "../components/Boton.jsx";
 import Campo from "../components/Campo.jsx";
 import { EstadoVacio, MensajeError } from "../components/Estados.jsx";
 import ResumenCompra from "../components/ResumenCompra.jsx";
 import { useCarrito } from "../context/CarritoContext.jsx";
-import { useNavegacion } from "../context/NavegacionContext.jsx";
 import { useSesion } from "../context/SesionContext.jsx";
 import { useTitulo } from "../hooks/useTitulo.js";
 import { nombreZona } from "../utils/boletos.js";
@@ -16,19 +16,21 @@ import "./CompraPages.css";
 // Tarjeta de prueba que siempre es rechazada, para mostrar el estado de error.
 const TARJETA_RECHAZADA = "4000000000000002";
 
+// Junta los items del carrito por evento y zona: se crea una orden por cada grupo.
 function agruparPorZona(items){
-  return Object.values(items.reduce((grupos, item) => {
+  const grupos = {};
+  for (const item of items){
     const clave = `${item.eventoId}-${item.zonaId}`;
-    const grupo = grupos[clave] || { ...item, cantidad: 0, asientos: [] };
-    grupo.cantidad += item.cantidad;
-    if (item.asiento) grupo.asientos = [...grupo.asientos, item.asiento];
-    return { ...grupos, [clave]: grupo };
-  }, {}));
+    if (!grupos[clave]) grupos[clave] = { ...item, cantidad: 0, asientos: [] };
+    grupos[clave].cantidad += item.cantidad;
+    if (item.asiento) grupos[clave].asientos.push(item.asiento);
+  }
+  return Object.values(grupos);
 }
 
 export default function PagoPage(){
   useTitulo("Pago");
-  const { ir } = useNavegacion();
+  const navegar = useNavigate();
   const { usuario } = useSesion();
   const { items, cargo, total, vaciar } = useCarrito();
   const [datos, setDatos] = useState({ nombre: "", numero: "", vence: "", cvv: "" });
@@ -43,7 +45,18 @@ export default function PagoPage(){
     return (
       <div className="contenedor pagina">
         <EstadoVacio titulo="No hay boletos para pagar" texto="Agrega boletos al carrito para continuar.">
-          <Boton vista="inicio" tamano="pequeno">Explorar eventos</Boton>
+          <Boton to="/eventos" tamano="pequeno">Explorar eventos</Boton>
+        </EstadoVacio>
+      </div>
+    );
+  }
+
+  // La ruta /checkout es pública; sin sesión se pide ingresar y después se vuelve aquí.
+  if (!usuario){
+    return (
+      <div className="contenedor pagina">
+        <EstadoVacio titulo="Inicia sesión para pagar" texto="Tus boletos quedarán guardados en tu cuenta.">
+          <Boton to="/ingresar" state={{ desde: "/checkout" }} tamano="pequeno">Ingresar para continuar</Boton>
         </EstadoVacio>
       </div>
     );
@@ -93,7 +106,8 @@ export default function PagoPage(){
         });
         codigos.push(orden.codigo);
       }
-      ir("confirmacion", { codigos });
+      // Primero se pasa a la confirmación y después se vacía el carrito, para no mostrar el carrito vacío.
+      await navegar(`/confirmacion?codigos=${codigos.join(",")}`, { replace: true });
       vaciar();
     } catch (error){
       setErrorPago(error.message);

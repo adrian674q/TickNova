@@ -100,7 +100,7 @@
   }
 
   /* En móvil el inicio muestra menos secciones y tarjetas, como en el prototipo. */
-  .inicio-secciones .seccion-eventos:not(#resultados) .rejilla-eventos li:nth-child(n + 3) {
+  .inicio-secciones .rejilla-eventos li:nth-child(n + 3) {
     display: none;
   }
 
